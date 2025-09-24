@@ -45,8 +45,7 @@ class PageResource extends Resource
                     ->helperText('Gebruik {slug} of {id} voor een template.')
                     ->placeholder('/nieuwe-pagina')
                     ->dehydrateStateUsing(fn ($state) => '/'.trim(trim($state), '/'))
-                    ->label('Pad')
-                    ->required(),
+                    ->label('Pad'),
                 Tabs::make()
                     ->columnSpanFull()
                     ->tabs([
@@ -78,7 +77,7 @@ class PageResource extends Resource
                                     ->native(false)
                                     ->required()
                                     ->placeholder('Kies een model...')
-                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Template->value),
+                                    ->visible(fn(Get $get) => self::isPageType(PageTypeEnum::Template, $get('type'))),
                                 Forms\Components\Select::make('error_code')
                                     ->label('Foutcode')
                                     ->options([
@@ -97,7 +96,7 @@ class PageResource extends Resource
                                     ->native(false)
                                     ->required()
                                     ->placeholder('Kies een foutcode...')
-                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Error->value)
+                                    ->visible(fn(Get $get) => self::isPageType(PageTypeEnum::Error, $get('type'))),
                             ]),
                     ]),
             ]);
@@ -108,8 +107,9 @@ class PageResource extends Resource
         $record->updateRoute(true);
     }
 
-    protected static function isTemplate(Forms\Get $get): bool {
-        return $get('type') === PageTypeEnum::Template;
+    protected static function isPageType(PageTypeEnum $a, mixed $b): bool {
+        if($b instanceof PageTypeEnum) return $a === $b;
+        return PageTypeEnum::tryFrom($b) == $a;
     }
 
     protected static function getModelOptions(): array
@@ -128,12 +128,13 @@ class PageResource extends Resource
             ->columns([
                 Columns\TextColumn::make('title')
                     ->label('Titel')
+                    ->description(fn(Page $record): string => $record->type !== PageTypeEnum::Default ? $record->type->getLabel() : '')
                     ->sortable()
                     ->searchable(),
                 Columns\TextColumn::make('path')
                     ->label('Pad')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
             ])
             ->filters([
                 //

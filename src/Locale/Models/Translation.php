@@ -7,14 +7,26 @@
     use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Database\Eloquent\Relations\MorphMany;
+    use Illuminate\Support\Str;
 
     class Translation extends Model
     {
+        const CUSTOM_TRANSLATION_GROUP = '_custom';
+
         protected $table = 'fd_cms_translations';
 
         public $timestamps = false;
 
         protected $guarded = [];
+
+        public function isCustomTranslation() {
+            return str_starts_with($this->key, self::CUSTOM_TRANSLATION_GROUP.'.');
+        }
+
+        public function getUnprefixedKey() {
+            if(!$this->isCustomTranslation()) return $this->key;
+            return Str::substr($this->key, Str::length(Translation::CUSTOM_TRANSLATION_GROUP)+1);
+        }
 
          /**
          * Get a translation for the current locale.

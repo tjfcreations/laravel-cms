@@ -31,14 +31,7 @@
         }
 
         public function getData(array $data): array {
-            $quickSelect = $this->quickSelect();
-            
-            if($quickSelect) {
-                $data['records'] = $quickSelect->getRecords($data);
-            }
-
             $data = $this->with($data);
-            $data = $this->resolveShortcodes($data);
 
             return $data;
         }
@@ -57,15 +50,5 @@
             }
             
             return $schema;
-        }
-
-        protected function resolveShortcodes(array $data): array {
-            foreach($data as &$value) {
-                if(is_string($value)) {
-                    $value = ShortcodeProcessor::resolve($value, $data);
-                }
-            }
-
-            return $data;
         }
     }

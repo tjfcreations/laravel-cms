@@ -1,6 +1,7 @@
 <?php
 namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
+use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 use FeenstraDigital\LaravelCMS\Pagebuilder\Http\Controllers\DynamicPageController;
 use FeenstraDigital\LaravelCMS\Pagebuilder\Middleware\SetLocale;
 
-class DynamicPageServiceProvider extends ServiceProvider {
+class DynamicRouteServiceProvider extends ServiceProvider {
     public function boot(): void {
         try {
             $this->registerDynamicRoutes();
@@ -25,6 +26,11 @@ class DynamicPageServiceProvider extends ServiceProvider {
         Route::middleware('web')
             ->group(function() {
                 foreach (Page::all() as $page) {
+                    if($page->type === PageTypeEnum::Error) {
+
+                    }
+
+                    // register a normal get-route
                     Route::get($page->path, [DynamicPageController::class, 'show'])
                         ->defaults('pageId', $page->id);
                 }

@@ -11,11 +11,11 @@ return new class extends Migration
         Schema::create('fd_cms_pages', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('path');
             $table->string('type');
-            $table->string('model')->nullable();
-            $table->int('error_code')->nullable();
             $table->json('pagebuilder');
+            $table->string('path')->nullable();
+            $table->string('model')->nullable();
+            $table->integer('error_code')->nullable();
             $table->timestamps();
         });
     }

@@ -1,17 +1,7 @@
 <?php
     namespace FeenstraDigital\LaravelCMS\Pagebuilder\Support;
 
-    use Filament\Forms\Components\Grid;
-    use Filament\Forms\Components\Select;
-    use Filament\Forms\Components\Concerns;
-    use Illuminate\Support\Str;
-    use Illuminate\Contracts\Support\Arrayable;
-    use Closure;
-    use Filament\Forms\Components\Radio;
-    use Filament\Forms\Components\TextInput;
-    use Filament\Forms\Get;
-    use Illuminate\Database\Eloquent\Collection;
-    use Filament\Forms\Components\Hidden;
+    use Illuminate\Support\Collection;
     use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Forms;
 
     class QuickSelect {
@@ -44,7 +34,7 @@
             return $this;
         }
 
-        public function getRecords(array $data) {
+        public function getRecords(array $data): Collection {
             switch($data['view']) {
                 case 'all':
                     return $this->model::all();

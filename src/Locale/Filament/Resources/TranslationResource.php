@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
 use FeenstraDigital\LaravelCMS\Locale\Registry;
+use Filament\Tables\Columns\TextColumn;
 
 class TranslationResource extends Resource
 {
@@ -106,7 +107,13 @@ class TranslationResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('locale')
+                    ->label('Taal')
+                    ->formatStateUsing(fn(string $state) => Locale::where('code', $state)->first()?->name),
+                TextColumn::make('key')
+                    ->label('Sleutel/attribuut'),
+                TextColumn::make('value')
+                    ->label('Vertaling')
             ])
             ->filters([
                 //

@@ -8,6 +8,7 @@
     use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
     use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
     use Filament\Forms;
+    use Filament\Forms\Components\KeyValue;
     use Filament\Forms\Form;
     use Filament\Resources\Pages\EditRecord;
     use Illuminate\Support\Str;
@@ -38,7 +39,7 @@
                     $this->handleSave($record, $data);
                 })
                 ->hidden(function() {
-                    return Locale::allNotDefault()->isEmpty();
+                    return Locale::all()->isEmpty();
                 });
         }
 
@@ -73,7 +74,12 @@
             $data = [];
 
             foreach($record->translations as $translation) {
-                Arr::set($data, "{$translation->key}.{$translation->locale}", $translation->value);
+                if($translation->isCustomTranslation()) {
+                    $unprefixedKey = $translation->getUnprefixedKey();
+                    Arr::set($data, Translation::CUSTOM_TRANSLATION_GROUP.".{$translation->locale}.{$unprefixedKey}", $translation->value);
+                } else {
+                    Arr::set($data, "{$translation->key}.{$translation->locale}", $translation->value);
+                }
             }
 
             return $data;
@@ -84,11 +90,23 @@
                 if(!is_array(@$data[$attribute])) continue;
 
                 $translations = $data[$attribute];
-                foreach($translations as $locale => $translation) {
-                    if(isset($translation) && !empty($translation)) {
-                        Translation::setForLocale($locale, $attribute, $translation, $record);
+                foreach($translations as $locale => $value) {
+                    if(isset($value) && !empty($value)) {
+                        Translation::setForLocale($locale, $attribute, $value, $record);
                     } else {
                         Translation::removeForLocale($locale, $attribute, $record);
+                    }
+                }
+            }
+
+            // delete all custom translations
+            $record->translations()->where('key', 'like', Translation::CUSTOM_TRANSLATION_GROUP.'.%')->delete();
+
+            // insert new custom translations
+            foreach($data[Translation::CUSTOM_TRANSLATION_GROUP] as $locale => $translations) {
+                foreach($translations as $key => $value) {
+                    if(isset($value) && !empty($value)) {
+                        Translation::setForLocale($locale, Translation::CUSTOM_TRANSLATION_GROUP.'.'.$key, $value, $record);
                     }
                 }
             }
@@ -97,7 +115,7 @@
         protected function getTabs() {
             return Tabs::make()
                 ->tabs(function() {
-                    return Locale::allNotDefault()->map(function($locale) {
+                    return Locale::all()->map(function($locale) {
                         return $this->getTab($locale);
                     })->toArray();
                 });
@@ -106,18 +124,35 @@
         protected function getTab(Locale $locale) {
             return Tabs\Tab::make($locale->name)
                 ->schema(function(TranslatableInterface $record) use($locale) {
-                    $translatableAttributes = $record->getTranslatableAttributes();
-
-                    return collect($translatableAttributes)->map(function($attribute) use($locale) {
-                        $label = $this->labels[$attribute] ?? Str::ucfirst($attribute);
-
-                        return $this->getComponent($attribute, $locale)
-                            ->label("{$label} ({$locale->name})");
-                    })->toArray();
+                    return [
+                        ...$this->makeAttributeInputs($record, $locale),
+                        $this->makeKeyValueEditor($record, $locale)
+                    ];
                 });
         }
 
-        protected function getComponent(string $attribute, Locale $locale) {
+        protected function makeAttributeInputs(TranslatableInterface $record, Locale $locale): array {
+            $translatableAttributes = $record->getTranslatableAttributes();
+
+            return collect($translatableAttributes)->map(function($attribute) use($locale) {
+                $label = $this->labels[$attribute] ?? Str::ucfirst($attribute);
+
+                return $this->makeAttributeInput($attribute, $locale)
+                    ->label("{$label} ({$locale->name})");
+            })->toArray();
+        }
+
+        protected function makeKeyValueEditor(TranslatableInterface $record, Locale $locale): KeyValue {
+            return KeyValue::make(Translation::CUSTOM_TRANSLATION_GROUP.".{$locale->code}")
+                ->label("Lokale vertalingen ({$locale->name})")
+                ->keyLabel('Vertaalsleutel')
+                ->valueLabel('Vertaling')
+                ->hintIcon(
+                    'heroicon-m-question-mark-circle', 
+                    tooltip: str('Met lokale vertalingen kun je makkelijk je pagina-inhoud vertalen. Gebruik [translate vertaalsleutel] in je pagina-inhoud om een lokale vertaling te tonen.'));
+        }
+
+        protected function makeAttributeInput(string $attribute, Locale $locale) {
             $name = "{$attribute}.{$locale->code}";
 
             if($this->isRichAttribute($attribute)) {

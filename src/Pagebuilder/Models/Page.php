@@ -10,6 +10,8 @@ use FeenstraDigital\LaravelCMS\Locale\Traits\Translatable;
     use FeenstraDigital\LaravelCMS\Pagebuilder\Support\Block;
     use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
 use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
+use FeenstraDigital\LaravelCMS\Pagebuilder\Support\RecordWrapper;
+use FeenstraDigital\LaravelCMS\Pagebuilder\Support\PageData;
 
     class Page extends Model implements TranslatableInterface
     {
@@ -30,17 +32,17 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
         public function render(): string {
             $content = '';
 
-            $data = new stdClass();
+            // compile page data
+            $pageData = new PageData($this);
 
             if($this->isTemplate()) {
-                $data->record = $this->getRecord();
+                $pageData->setRecord($this->getRecord());
             }
 
-            $data->title = ShortcodeProcessor::resolve($this->title, ['page' => $data]);
-            
+            // render blocks
             if(is_array($this->pagebuilder)) {
                 foreach($this->pagebuilder as $schema) {
-                    $content .= $this->renderBlock($schema['type'], array_merge($schema['data'], ['page' => $data]));
+                    $content .= $this->renderBlock($schema['type'], $schema['data'], $pageData);
                 }
             }
 
@@ -48,7 +50,7 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
             echo $content;
             View::stopSection();
             
-            $html = view('layouts.app', ['page' => $data])->render();
+            $html = view('layouts.app', $pageData->toArray())->render();
             return $html;
         }
 
@@ -69,11 +71,11 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
             return $this->type === PageTypeEnum::Template;
         }
 
-        protected function renderBlock(string $type, array $data): string {
+        protected function renderBlock(string $type, array $schemaData, PageData $pageData): string {
             foreach(Registry::blocks() as $block) {
                 if($block->getType() !== $type) continue;
                 
-                return $block->render($data);
+                return $block->render($pageData->toBlockDataArray($block, $schemaData));
             }
 
             return '';

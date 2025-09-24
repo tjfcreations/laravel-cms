@@ -21,7 +21,7 @@ class PagebuilderServiceProvider extends ServiceProvider {
         $router->pushMiddlewareToGroup('web', SetLocale::class);
 
         // register page routes
-        $this->app->register(DynamicPageServiceProvider::class);
+        $this->app->register(DynamicRouteServiceProvider::class);
 
         // initialize shortcode processor
         ShortcodeProcessor::init();
