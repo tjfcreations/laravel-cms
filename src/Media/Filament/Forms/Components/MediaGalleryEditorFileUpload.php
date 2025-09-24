@@ -16,7 +16,7 @@ use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MediaGalleryEditorFileUpload extends FileUpload {
-    protected string $view = 'media-gallery::forms.components.media-gallery-editor-file-upload';
+    protected string $view = 'fd-cms::components.media.filament.forms.media-gallery-editor-file-upload';
 
     protected function setUp(): void {
         parent::setUp();

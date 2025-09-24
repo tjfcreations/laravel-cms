@@ -17,7 +17,7 @@ use Illuminate\Support\ServiceProvider;
 class MediaServiceProvider extends ServiceProvider {
     public function boot() {       
         $this->publishes([
-            __DIR__.'/../resources/js' => public_path('vendor/feenstradigital/laravel-cms/media/js'),
+            __DIR__.'/../../resources/media/js' => public_path('vendor/feenstradigital/laravel-cms/media/js'),
         ], 'laravel-assets');
         
         Config::set('media-library.media_model', MediaItem::class);

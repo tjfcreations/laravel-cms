@@ -5,4 +5,5 @@
 
     interface TranslatableInterface {
         public function translations(): MorphMany;
+        public function getTranslatableAttributes(): array;
     }

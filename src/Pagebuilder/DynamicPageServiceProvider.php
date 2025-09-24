@@ -1,5 +1,5 @@
 <?php
-namespace Tjall\Pagebuilder;
+namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Cache;

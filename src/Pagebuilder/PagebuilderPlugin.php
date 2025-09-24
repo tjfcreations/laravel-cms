@@ -1,6 +1,6 @@
 <?php
 
-namespace Tjall\Pagebuilder;
+namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;

@@ -1,15 +1,22 @@
 <?php
     namespace FeenstraDigital\LaravelCMS\Pagebuilder\Models;
 
+use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
+use FeenstraDigital\LaravelCMS\Locale\Traits\Translatable;
     use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\View;
-use stdClass;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
+    use Illuminate\Support\Facades\View;
+    use stdClass;
+    use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
     use FeenstraDigital\LaravelCMS\Pagebuilder\Support\Block;
     use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
+use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
 
-    class Page extends Model
+    class Page extends Model implements TranslatableInterface
     {
+        use Translatable;
+
+        protected $translate = ['title'];
+
         protected $table = 'fd_cms_pages';
 
         protected $guarded = [];
@@ -24,9 +31,12 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
             $content = '';
 
             $data = new stdClass();
+
             if($this->isTemplate()) {
                 $data->record = $this->getRecord();
             }
+
+            $data->title = ShortcodeProcessor::resolve($this->title, ['page' => $data]);
             
             if(is_array($this->pagebuilder)) {
                 foreach($this->pagebuilder as $schema) {
@@ -38,7 +48,7 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
             echo $content;
             View::stopSection();
             
-            $html = view('layouts.app')->render();
+            $html = view('layouts.app', ['page' => $data])->render();
             return $html;
         }
 

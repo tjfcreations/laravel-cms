@@ -59,8 +59,8 @@
             return $schema;
         }
 
-        public function resolveShortcodes(array $data): array {
-            foreach($data as $key => &$value) {
+        protected function resolveShortcodes(array $data): array {
+            foreach($data as &$value) {
                 if(is_string($value)) {
                     $value = ShortcodeProcessor::resolve($value, $data);
                 }

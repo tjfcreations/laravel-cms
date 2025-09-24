@@ -1,39 +1,29 @@
 <?php
 
-namespace Tjall\Pagebuilder;
+namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Commands\MakePagebuilderBlock;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Commands\MakePagebuilderShortcode;
 use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Middleware\SetLocale;
+use FeenstraDigital\LaravelCMS\Locale\Http\Middleware\SetLocale;
 use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
 
-class PagebuilderServiceProvider extends PackageServiceProvider {
-    public function configurePackage(Package $package): void {
-        $package
-            ->name('laravel-pagebuilder')
-            ->discoversMigrations()
-            ->hasRoute('web')
-            ->hasCommands([
-                MakePagebuilderBlock::class,
-                MakePagebuilderShortcode::class
-            ]);
-    }
-
+class PagebuilderServiceProvider extends ServiceProvider {
     public function bootingPackage() {
         $this->publishes([
             __DIR__.'/Filament/Resources' => app_path('Filament/Resources'),
         ], 'filament-resources');
 
-        $router = $this->app->make(Router::class);
-        $router->pushMiddlewareToGroup('web', SetLocale::class);
     }
 
-    public function packageBooted(): void {
+    public function boot(): void {
+        // register SetLocale middleware
+        $router = $this->app->make(Router::class);
+        $router->pushMiddlewareToGroup('web', SetLocale::class);
+
+        // register page routes
         $this->app->register(DynamicPageServiceProvider::class);
 
+        // initialize shortcode processor
         ShortcodeProcessor::init();
     }
 }

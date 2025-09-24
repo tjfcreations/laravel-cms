@@ -1,5 +1,5 @@
 <?php
-    namespace Tjall\Pagebuilder;
+    namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
     use Thunder\Shortcode\HandlerContainer\HandlerContainer;
     use Thunder\Shortcode\Parser\RegularParser;

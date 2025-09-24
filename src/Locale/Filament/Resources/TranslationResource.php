@@ -22,7 +22,7 @@ class TranslationResource extends Resource
     protected static ?string $model = Translation::class;
 
     protected static ?string $navigationGroup = 'Vertalingen';
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $label = 'vertaling';
     protected static ?string $pluralLabel = 'vertalingen';

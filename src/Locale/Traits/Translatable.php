@@ -12,7 +12,7 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\Traits\Selectable;
             return $this->morphMany(Translation::class, 'model');
         }
 
-        public function getTranslatableAttributes() {
+        public function getTranslatableAttributes(): array {
             return is_array(@$this->translate) ? $this->translate : [];
         }
 

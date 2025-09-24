@@ -76,7 +76,7 @@ class PageResource extends Resource
                                     ->options(self::getModelOptions())
                                     ->required()
                                     ->placeholder('Kies een model...')
-                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Template)
+                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Template->value)
                             ]),
                     ]),
             ]);

@@ -2,6 +2,7 @@
     "name": "feenstradigital/laravel-cms",
     "version": "1.0.0",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "FeenstraDigital\\LaravelCMS\\": "src/"
@@ -11,10 +12,14 @@
         "filament/support": "^3.3",
         "filament/filament": "^3.3",
         "filament/forms": "^3.3",
+        "filament/spatie-laravel-media-library-plugin": "^3.2",
+        "filament/spatie-laravel-settings-plugin": "^3.2",
         "spatie/laravel-html": "^3.12",
         "spatie/laravel-package-tools": "^1.92",
         "spatie/laravel-settings": "^3.4",
-        "spatie/laravel-medialibrary": "^11.13"
+        "spatie/laravel-medialibrary": "^11.13",
+        "thunderer/shortcode": "^0.7.6",
+        "filament/actions": "^3.3"
     },
     "extra": {
         "laravel": {
