@@ -36,6 +36,9 @@
                 })
                 ->action(function (TranslatableInterface $record, array $data) {
                     $this->handleSave($record, $data);
+                })
+                ->hidden(function() {
+                    return Locale::allNotDefault()->isEmpty();
                 });
         }
 
