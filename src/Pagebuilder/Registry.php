@@ -42,13 +42,16 @@ class Registry
 
     protected static function cache(string $key, callable $callback): array
     {
-        if (app()->isLocal()) {
-            // in local: no caching, just run the callback
+        // no caching, just run the callback
+        if (app()->isLocal() || app()->runningInConsole()) {
             return $callback();
         }
 
-        // in production: cache forever
-        return cache()->rememberForever($key, $callback);
+        try {
+            return cache()->rememberForever($key, $callback);
+        } catch(\Exception) {
+            return $callback();
+        }
     }
 
     /**
