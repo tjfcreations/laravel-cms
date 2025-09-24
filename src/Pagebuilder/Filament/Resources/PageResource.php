@@ -67,16 +67,37 @@ class PageResource extends Resource
                                 Forms\Components\Select::make('type')
                                     ->label('Paginatype')
                                     ->options(PageTypeEnum::class)
-                                    ->default(PageTypeEnum::Static)
+                                    ->native(false)
+                                    ->default(PageTypeEnum::Default)
                                     ->live()
                                     ->required()
                                     ->selectablePlaceholder(false),
                                 Forms\Components\Select::make('model')
                                     ->label('Model')
                                     ->options(self::getModelOptions())
+                                    ->native(false)
                                     ->required()
                                     ->placeholder('Kies een model...')
-                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Template->value)
+                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Template->value),
+                                Forms\Components\Select::make('error_code')
+                                    ->label('Foutcode')
+                                    ->options([
+                                        '4XX' => [
+                                            400 => '400 - Bad Request',
+                                            401 => '401 - Unauthorized',
+                                            402 => '402 - Payment Required',
+                                            403 => '403 - Forbidden',
+                                            404 => '404 - Not Found',
+                                        ],
+                                        '5XX' => [
+                                            500 => '500 - Internal Server Error',
+                                            503 => '503 - Service Unavailable'
+                                        ]
+                                    ])
+                                    ->native(false)
+                                    ->required()
+                                    ->placeholder('Kies een foutcode...')
+                                    ->visible(fn(Get $get) => $get('type') === PageTypeEnum::Error->value)
                             ]),
                     ]),
             ]);

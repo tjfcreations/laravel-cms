@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('path');
             $table->string('type');
             $table->string('model')->nullable();
+            $table->int('error_code')->nullable();
             $table->json('pagebuilder');
             $table->timestamps();
         });

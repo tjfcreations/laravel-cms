@@ -5,13 +5,15 @@ use Filament\Support\Contracts\HasLabel;
 
 enum PageTypeEnum: string implements HasLabel
 {
-    case Static = 'static';
+    case Default = 'default';
     case Template = 'template';
+    case Error = 'error';
 
     public function getLabel(): string {
         return match($this) {
-            self::Static => 'Standaard',
             self::Template => 'Template',
+            self::Default => 'Standaardpagina',
+            self::Error => 'Foutpagina'
         };
     }
 }
