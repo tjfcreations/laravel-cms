@@ -6,4 +6,4 @@
     $media_item = $model->getFirstMedia();
 @endphp
 
-<x-media-gallery::media-gallery.item :item="$media_item" {{ $attributes }} />
+<x-fd-cms::media.media-gallery.item :item="$media_item" {{ $attributes }} />

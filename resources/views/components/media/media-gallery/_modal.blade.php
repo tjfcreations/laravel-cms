@@ -22,10 +22,10 @@
     style="display: none;">
 
     {{-- back button --}}
-    <x-media-gallery::media-gallery._modal-button action="back" :button="$backButtonSlot" />
+    <x-fd-cms::media.media-gallery._modal-button action="back" :button="$backButtonSlot" />
 
     {{-- next button --}}
-    <x-media-gallery::media-gallery._modal-button action="next" :button="$nextButtonSlot" />
+    <x-fd-cms::media.media-gallery._modal-button action="next" :button="$nextButtonSlot" />
 
     {{-- image --}}
     <template x-for="item in modal.getItems()">
@@ -76,5 +76,5 @@
         x-transition:leave-end="opacity-0"></div>
 
     {{-- metadata --}}
-    <x-media-gallery::media-gallery._modal-meta :meta="$metaSlot" />
+    <x-fd-cms::media.media-gallery._modal-meta :meta="$metaSlot" />
 </div>

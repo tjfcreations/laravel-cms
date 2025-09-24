@@ -13,7 +13,7 @@
 
 @foreach ($items as $i => $item)
     @php($slot = $i === 0 ? $spotlightSlot : $itemSlot)      
-    <x-media-gallery::merged-slot :merge="$slot">
-        <x-media-gallery::media-gallery.item :item="$item" :videoIndicator="$videoIndicator" :imgClass="$slot->attributes->get('img-class') ?? $slot->attributes->get('imgClass')" :size="$slot->attributes->get('size')" />
-    </x-media-gallery::merged-slot>
+    <x-fd-cms::media.merged-slot :merge="$slot">
+        <x-fd-cms::media.media-gallery.item :item="$item" :videoIndicator="$videoIndicator" :imgClass="$slot->attributes->get('img-class') ?? $slot->attributes->get('imgClass')" :size="$slot->attributes->get('size')" />
+    </x-fd-cms::media.merged-slot>
 @endforeach

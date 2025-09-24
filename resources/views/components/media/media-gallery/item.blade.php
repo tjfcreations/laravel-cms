@@ -13,17 +13,17 @@
     @if(!blank($slot))
         {{ $slot }}
     @else
-        <x-media-gallery::media-item 
+        <x-fd-cms::media.media-item 
             :item="$item" 
             class="{{ $imgClass }}"
             size="{{ $size }}" />
 
         @if($item->isVideo())
-            <x-media-gallery::merged-slot 
+            <x-fd-cms::media.merged-slot 
                 :merge="$videoIndicator"
                 class="absolute right-2 bottom-2 bg-white rounded-md px-2 py-1">
                 Video
-            </x-media-gallery::merged-slot>
+            </x-fd-cms::media.merged-slot>
         @endif
     @endif
 
