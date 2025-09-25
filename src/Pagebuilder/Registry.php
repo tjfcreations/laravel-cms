@@ -3,35 +3,37 @@
 namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
 use FeenstraDigital\LaravelCMS\Pagebuilder\Support\Block;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Support\Shortcode;
+use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use Throwable;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Concerns\Translatable;
+use Composer\Autoload\ClassLoader;
 
-class Registry
-{
-    public static function blocks(): Collection
-    {
-        return self::getInstances(self::cache('pagebuilder.blocks', fn () =>
-            self::discoverAppClasses(Block::class)
+class Registry {
+    public static function blocks(): Collection {
+        return self::getInstances(self::cache(
+            'pagebuilder.blocks',
+            fn() =>
+            self::discoverClasses(Block::class)
         ));
     }
 
-    public static function shortcodes(): Collection
-    {
-        return self::getInstances(self::cache('pagebuilder.shortcodes', fn () =>
-            self::discoverAppClasses(Shortcode::class)
+    public static function shortcodes(): Collection {
+        return self::getInstances(self::cache(
+            'pagebuilder.shortcodes',
+            fn() =>
+            self::discoverClasses(Shortcode::class)
         ));
     }
 
-    public static function models(): Collection
-    {
-        return self::getInstances(self::cache('app.models', fn () =>
-            self::discoverAppClasses(Model::class)
+    public static function models(): Collection {
+        return self::getInstances(self::cache(
+            'app.models',
+            fn() =>
+            self::discoverClasses(Model::class)
         ));
     }
 
@@ -40,8 +42,7 @@ class Registry
             ->map(fn($model) => (new $model()));
     }
 
-    protected static function cache(string $key, callable $callback): array
-    {
+    protected static function cache(string $key, callable $callback): array {
         // no caching, just run the callback
         if (app()->isLocal() || app()->runningInConsole()) {
             return $callback();
@@ -49,66 +50,29 @@ class Registry
 
         try {
             return cache()->rememberForever($key, $callback);
-        } catch(\Exception) {
+        } catch (\Exception) {
             return $callback();
         }
     }
 
     /**
-     * Discover all classes that optionally extend $parentClass.
+     * Discover classes that optionally extend $parentClass.
      */
-    protected static function discoverAppClasses(?string $parentClass = null): array
-    {
-        $classes = self::getAppClasses();
+    protected static function discoverClasses(?string $parentClass = null): array {
+        $classLoader = require base_path('vendor/autoload.php');
+        $classes = array_keys($classLoader->getClassMap());
 
         if (blank($parentClass)) {
-            return $classes->all();
+            return $classes;
         }
 
-        // Filter by parent class / interface
-        return $classes->filter(function ($class) use ($parentClass) {
-            try {
-                if (! is_subclass_of($class, $parentClass)) {
-                    return false;
-                }
+        return array_filter($classes, function ($class) use ($parentClass) {
+            $vendor = strtok($class, '\\');
+            if($vendor !== 'App' && $vendor !== 'FeenstraDigital') return false;
 
-                $ref = new ReflectionClass($class);
-                return ! $ref->isAbstract();
-            } catch (Throwable) {
-                return false;
-            }
-        })->values()->all();
-    }
+            if(!class_exists($class)) return false;
 
-    /**
-     * Get all app classes (using Composer classmap in production, filesystem in local).
-     */
-    protected static function getAppClasses()
-    {
-        $namespace = 'App\\';
-
-        if (app()->isLocal()) {
-            // scan filesystem, map to FQCNs
-            return collect(File::allFiles(app_path()))
-                ->map(function ($file) use ($namespace) {
-                    $relative = Str::after($file->getPathname(), app_path() . DIRECTORY_SEPARATOR);
-                    $class = $namespace . str_replace(
-                        [DIRECTORY_SEPARATOR, '.php'],
-                        ['\\', ''],
-                        $relative
-                    );
-                    return $class;
-                })
-                ->filter(fn(string $class) => class_exists($class))
-                ->values();
-        }
-
-        // production: use composer optimized classmap
-        $classLoader = require base_path('vendor/autoload.php');
-
-        return collect($classLoader->getClassMap())
-            ->keys()
-            ->filter(fn(string $class) => Str::startsWith($class, $namespace))
-            ->values();
+            return is_subclass_of($class, $parentClass);
+        });
     }
 }

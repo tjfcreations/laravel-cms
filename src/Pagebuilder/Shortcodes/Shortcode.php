@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Support;
+    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes;
 
     use Illuminate\Support\Collection;
 

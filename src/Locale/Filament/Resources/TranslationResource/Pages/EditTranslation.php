@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\TranslationResource\Pages;
+namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource\Pages;
 
 use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource;
 use Filament\Actions;

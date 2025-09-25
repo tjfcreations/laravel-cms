@@ -74,11 +74,12 @@
             $data = [];
 
             foreach($record->translations as $translation) {
-                if($translation->isCustomTranslation()) {
-                    $unprefixedKey = $translation->getUnprefixedKey();
-                    Arr::set($data, Translation::CUSTOM_TRANSLATION_GROUP.".{$translation->locale}.{$unprefixedKey}", $translation->value);
-                } else {
-                    Arr::set($data, "{$translation->key}.{$translation->locale}", $translation->value);
+                foreach($translation->values() as $locale => $value) {
+                    if($translation->group === 'custom') {
+                        Arr::set($data, "_custom.{$locale}.{$translation->key}", $value);
+                    } else {
+                        Arr::set($data, "{$translation->key}.{$locale}", $value);
+                    }
                 }
             }
 
@@ -86,28 +87,32 @@
         }
 
         protected function handleSave(TranslatableInterface $record, array $data) {
-            foreach($record->getTranslatableAttributes() as $attribute) {
-                if(!is_array(@$data[$attribute])) continue;
+            $attributeData = collect($data)->except('_custom')->toArray();
+            $customData = $data['_custom'];
 
-                $translations = $data[$attribute];
+            // save attribute translations
+            foreach($attributeData as $key => $translations) {
+                $translation = Translation::get($key, $record);
+
                 foreach($translations as $locale => $value) {
-                    if(isset($value) && !empty($value)) {
-                        Translation::setForLocale($locale, $attribute, $value, $record);
-                    } else {
-                        Translation::removeForLocale($locale, $attribute, $record);
-                    }
+                    // ignore if translation was not changed
+                    if($translation->translate($locale) === $value) continue;
+                    $translation->set($locale, $value, 'user');
                 }
             }
 
             // delete all custom translations
-            $record->translations()->where('key', 'like', Translation::CUSTOM_TRANSLATION_GROUP.'.%')->delete();
+            $record->translations()->where('group', 'custom')->delete();
 
-            // insert new custom translations
-            foreach($data[Translation::CUSTOM_TRANSLATION_GROUP] as $locale => $translations) {
-                foreach($translations as $key => $value) {
-                    if(isset($value) && !empty($value)) {
-                        Translation::setForLocale($locale, Translation::CUSTOM_TRANSLATION_GROUP.'.'.$key, $value, $record);
-                    }
+            // save custom translations
+            foreach($customData as $locale => $items) {
+                foreach($items as $key => $value) {
+                    $key = Str::slug($key, '_');
+                    $translation = Translation::get($key, $record, 'custom');
+
+                    // ignore if translation was not changed
+                    if($translation->translate($locale) === $value) continue;
+                    $translation->set($locale, $value, 'user');
                 }
             }
         }
@@ -126,7 +131,7 @@
                 ->schema(function(TranslatableInterface $record) use($locale) {
                     return [
                         ...$this->makeAttributeInputs($record, $locale),
-                        $this->makeKeyValueEditor($record, $locale)
+                        $this->makeCustomTranslationsEditor($record, $locale)
                     ];
                 });
         }
@@ -142,8 +147,8 @@
             })->toArray();
         }
 
-        protected function makeKeyValueEditor(TranslatableInterface $record, Locale $locale): KeyValue {
-            return KeyValue::make(Translation::CUSTOM_TRANSLATION_GROUP.".{$locale->code}")
+        protected function makeCustomTranslationsEditor(TranslatableInterface $record, Locale $locale): KeyValue {
+            return KeyValue::make("_custom.{$locale->code}")
                 ->label("Lokale vertalingen ({$locale->name})")
                 ->keyLabel('Vertaalsleutel')
                 ->valueLabel('Vertaling')

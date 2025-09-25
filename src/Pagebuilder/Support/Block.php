@@ -5,12 +5,22 @@
     use Illuminate\Support\Str;
     use Illuminate\Support\Facades\Blade;
     use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
+    use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
 
     abstract class Block {
         public static string $view;
         public static string $label;
         public static ?string $icon = null;
+
+        public static function findByType(string $type) {
+            foreach (Registry::blocks() as $block) {
+                if ($block->getType() !== $type) {
+                    continue;
+                }
+
+                return $block;
+            }
+        }
 
         public function schema(): array {
             return [];
@@ -24,13 +34,27 @@
             return null;
         }
 
-        public function render(array $data = []): string {
-            $data = $this->getData($data);
+        public function render(array $data, PageRenderer $pageRenderer): string {
+            // process shortcodes inside data
+            foreach($data as &$value) {
+                $value = $pageRenderer->getShortcodeProcessor()->process($value);
+            }
 
-            return Blade::render(static::$view, $data);
+            $blockData = $this->mutateDataBeforeRender($data);
+            $mergedData = [
+                ...$pageRenderer->getData(),
+                'block' => (object) $blockData
+            ];
+
+            return Blade::render(static::$view, $mergedData);
         }
 
-        public function getData(array $data): array {
+        public function mutateDataBeforeRender(array $data): array {
+            $quickSelect = $this->quickSelect();
+            if($quickSelect) {
+                $data['quickSelect'] = true;
+            }
+
             $data = $this->with($data);
 
             return $data;

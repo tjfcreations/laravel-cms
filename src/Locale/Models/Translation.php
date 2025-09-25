@@ -2,80 +2,125 @@
     namespace FeenstraDigital\LaravelCMS\Locale\Models;
 
     use Illuminate\Database\Eloquent\Model;
-    use Illuminate\Support\Facades\View;
-    use stdClass;
     use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Database\Eloquent\Relations\MorphMany;
+    use Illuminate\Database\Eloquent\Relations\MorphTo;
+    use Illuminate\Support\Arr;
     use Illuminate\Support\Str;
 
     class Translation extends Model
     {
-        const CUSTOM_TRANSLATION_GROUP = '_custom';
-
         protected $table = 'fd_cms_translations';
+
+        protected $casts = [
+            'translations' => 'array'
+        ];
 
         public $timestamps = false;
 
         protected $guarded = [];
 
-        public function isCustomTranslation() {
-            return str_starts_with($this->key, self::CUSTOM_TRANSLATION_GROUP.'.');
-        }
-
-        public function getUnprefixedKey() {
-            if(!$this->isCustomTranslation()) return $this->key;
-            return Str::substr($this->key, Str::length(Translation::CUSTOM_TRANSLATION_GROUP)+1);
-        }
-
-         /**
-         * Get a translation for the current locale.
-         */
-        public static function get(string $key, ?TranslatableInterface $record = null): ?string {
-            return static::getForLocale(app()->getLocale(), $key, $record);
+        public function record(): MorphTo {
+            return $this->morphTo();
         }
 
         /**
-         * Remove a translation for the current locale.
+         * Get the translation value (current language by default).
          */
-        public static function remove(string $key, ?TranslatableInterface $record = null): bool {
-            static::removeForLocale(app()->getLocale(), $key, $record);
-            return true;
+        public function translate(?string $locale = null): ?string {
+            $locale = $locale ?? app()->currentLocale();
+            $value = Arr::get($this->translations, "$locale.value");
+            return is_string($value) && !empty($value) ? $value : null;
         }
 
         /**
-         * Set a translation for the current locale.
+         * Get all translation values.
          */
-        public static function set(string $key, string $value, ?TranslatableInterface $record = null): Translation {
-            return static::setForLocale(app()->getLocale(), $key, $value, $record);
+        public function values(): array {
+            return collect($this->translations)->map(fn($t) => @$t['value'])->toArray();
         }
 
         /**
-         * Get a translation for a given locale.
+         * Check if a translation exists for the given locale.
          */
-        public static function getForLocale(string $locale, string $key, ?TranslatableInterface $record = null): ?string {
-            $translation = self::getTranslations($record)->where('key', $key)->where('locale', $locale)->first();
-            
-            if(isset($translation)) {
-                return $translation->value;
+        public function has(string $locale): bool {
+            return !!$this->translate($locale);
+        }
+
+        /**
+         * Update the translation for a given locale.
+         */
+        public function set(string $locale, mixed $value = null, ?string $source = null) {
+            $value = is_string($value) ? $value : null;
+
+            if(is_string($value)) {
+                $translations = (array) $this->translations;
+                Arr::set($translations, "$locale.value", $value);
+                $this->translations = $translations;
+
+                if(is_string($source)) {
+                    $this->setMetaProperty($locale, 'source', $source, false);
+                }
             }
 
-            return null;
+            $this->save();
+
+            return $this;
         }
 
         /**
-         * Remove a translation for a given locale.
+         * Remove the translation for a given locale.
          */
-        public static function removeForLocale(string $locale, string $key, ?TranslatableInterface $record = null): bool {
-            self::getTranslations($record)->where(['key' => $key, 'locale' => $locale])->delete();
-            return true;
+        public function remove(string $locale) {
+            return $this->set($locale, null);
+        }
+
+        public function getMeta(string $locale): array {
+            return (array) Arr::get($this->translations, "$locale.meta");
+        }
+
+        public function setMeta(string $locale, array $meta, bool $save = true): self {
+            if(empty($meta)) return $this;
+
+            $mergedMeta = array_replace($this->getMeta($locale), $meta);
+            $translations = (array) $this->translations;
+            Arr::set($translations, "$locale.meta", $mergedMeta);
+            $this->translations = $translations;
+
+            if($save) {
+                $this->save();
+            }
+
+            return $this;
+        }
+
+        public function getMetaProperty(string $locale, string $key): mixed {
+            return Arr::get($this->getMeta($locale), $key);
+        }
+
+        public function setMetaProperty(string $locale, string $key, mixed $value, bool $save = true): self {
+            return $this->setMeta($locale, [ $key => $value ], $save);
+        }
+
+        public function isUserTranslation(string $locale): bool {
+            return $this->getMetaProperty($locale, 'source') === 'user';
         }
 
         /**
-         * Set a translation for a given locale.
+         * Get or create a translation.
          */
-        public static function setForLocale(string $locale, string $key, string $value, ?TranslatableInterface $record = null): Translation {
-            return self::getTranslations($record)->updateOrCreate(['key' => $key, 'locale' => $locale], ['value' => $value]);
+        public static function get(string $key, ?TranslatableInterface $record = null, ?string $group = null): Translation {
+            $translation = self::getTranslations($record)->where(['key' => $key, 'group' => $group ])->first();
+
+            if(!$translation) {
+                $translation = new Translation();
+                $translation->key = $key;
+                $translation->group = $group;
+                $translation->record()->associate($record);
+            }
+
+            return $translation;
         }
         
         protected static function getTranslations(?TranslatableInterface $record = null): MorphMany|Builder {

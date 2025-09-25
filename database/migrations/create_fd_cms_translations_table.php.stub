@@ -11,12 +11,13 @@ return new class extends Migration
     {
         Schema::create('fd_cms_translations', function (Blueprint $table) {
             $table->id();
-            $table->nullableMorphs('model');
-            $table->string('locale');
+            $table->nullableMorphs('record');
+            $table->string('group')->nullable();
             $table->string('key');
-            $table->string('value');
+            $table->longText('translations');
 
-            $table->unique(['model_type', 'model_id', 'locale', 'key']);
+            $table->unique(['record_type', 'record_id', 'group', 'key']);
+            $table->index(['group', 'key']);
         });
     }
 

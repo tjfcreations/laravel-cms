@@ -9,19 +9,10 @@ use FeenstraDigital\LaravelCMS\Pagebuilder\Traits\Selectable;
         use Selectable;
 
         public function translations(): MorphMany {
-            return $this->morphMany(Translation::class, 'model');
+            return $this->morphMany(Translation::class, 'record');
         }
 
         public function getTranslatableAttributes(): array {
             return is_array(@$this->translate) ? $this->translate : [];
-        }
-
-        public function getAttribute($key) {
-            if (!in_array($key, $this->translate)) {
-                return parent::getAttribute($key);
-            }
-
-            // get the translated attribute value, or the default attribute value
-            return Translation::get($key, $this) ?? parent::getAttribute($key);
         }
     }

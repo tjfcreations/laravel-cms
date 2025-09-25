@@ -2,7 +2,7 @@
 
 namespace FeenstraDigital\LaravelCMS\Pagebuilder;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\ShortcodeProcessor;
+use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
 use FeenstraDigital\LaravelCMS\Locale\Http\Middleware\SetLocale;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
@@ -22,8 +22,5 @@ class PagebuilderServiceProvider extends ServiceProvider {
 
         // register page routes
         $this->app->register(DynamicRouteServiceProvider::class);
-
-        // initialize shortcode processor
-        ShortcodeProcessor::init();
     }
 }

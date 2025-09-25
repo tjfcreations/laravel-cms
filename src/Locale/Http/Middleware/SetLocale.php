@@ -6,9 +6,7 @@
 
     class SetLocale {
         public function handle($request, Closure $next) {
-            if (session()->has('locale')) {
-                App::setLocale(session('locale'));
-            }
+            App::setLocale(session('locale', 'nl_NL'));
 
             return $next($request);
         }
