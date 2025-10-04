@@ -9,20 +9,17 @@ use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
 use Illuminate\Support\Facades\View;
 use Illuminate\Database\Eloquent\Model;
 
-class PageRenderer
-{
+class PageRenderer {
     protected Page $page;
     protected array $data;
     protected ShortcodeProcessor $shortcodeProcessor;
 
-    public function __construct(Page $page)
-    {
+    public function __construct(Page $page) {
         $this->page = $page;
         $this->shortcodeProcessor = new ShortcodeProcessor($this);
     }
 
-    public function render(): string
-    {
+    public function render(): string {
         $this->buildPageData();
 
         $content = $this->renderBlocks();
@@ -48,7 +45,7 @@ class PageRenderer
         $this->data['page'] = (object) [];
 
         // add record
-        if($record) {
+        if ($record) {
             $this->data['page']->record = $this->wrap($record);
         }
 
@@ -60,8 +57,7 @@ class PageRenderer
         return new ShortcodeProcessingWrapper($record, $this->shortcodeProcessor);
     }
 
-    protected function renderBlocks(): string
-    {
+    protected function renderBlocks(): string {
         $content = '';
 
         if (is_array($this->page->pagebuilder)) {
@@ -78,16 +74,14 @@ class PageRenderer
         return $content;
     }
 
-    protected function renderBlock(string $type, array $props): string
-    {
+    protected function renderBlock(string $type, array $props): string {
         $block = Block::findByType($type);
-        if(!$block) return '';
+        if (!$block) return '';
 
         return $block->render($props, $this);
     }
 
-    protected function handleViewSections(string $content): void
-    {
+    protected function handleViewSections(string $content): void {
         View::startSection('content');
         echo $content;
         View::stopSection();

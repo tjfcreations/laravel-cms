@@ -1,38 +1,36 @@
 <?php
-    namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-    use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
-    use Illuminate\Database\Eloquent\Model;
+namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-    class ShortcodeProcessingWrapper
-    {
-        protected Model $record;
-        protected ShortcodeProcessor $shortcodeProcessor;
+use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
+use Illuminate\Database\Eloquent\Model;
 
-        public function __construct(Model $record, ShortcodeProcessor $shortcodeProcessor)
-        {
-            $this->record = $record;
-            $this->shortcodeProcessor = $shortcodeProcessor;
-        }
+class ShortcodeProcessingWrapper {
+    protected Model $record;
+    protected ShortcodeProcessor $shortcodeProcessor;
 
-        public function __get($name) {
-            return $this->process($this->record->$name);
-        }
-
-        public function __call($name, $arguments) {
-            return $this->record->$name(...$arguments);
-        }
-
-        public function getRecord() {
-            return $this->record;
-        }
-
-        protected function process($value)
-        {
-            if(is_string($value)) {
-                return $this->shortcodeProcessor->process($value);
-            }
-
-            return $value;
-        }
+    public function __construct(Model $record, ShortcodeProcessor $shortcodeProcessor) {
+        $this->record = $record;
+        $this->shortcodeProcessor = $shortcodeProcessor;
     }
+
+    public function __get($name) {
+        return $this->process($this->record->$name);
+    }
+
+    public function __call($name, $arguments) {
+        return $this->record->$name(...$arguments);
+    }
+
+    public function unwrap() {
+        return $this->record;
+    }
+
+    protected function process($value) {
+        if (is_string($value)) {
+            return $this->shortcodeProcessor->process($value);
+        }
+
+        return $value;
+    }
+}

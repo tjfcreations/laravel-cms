@@ -1,10 +1,11 @@
 <?php
-    namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-    use Illuminate\Support\Collection;
+namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-    abstract class Shortcode {
-        public static string $name;
+use Illuminate\Support\Collection;
 
-        public abstract function resolve(Collection $arguments, array $data): mixed;
-    }
+abstract class Shortcode {
+    public static string $name;
+
+    public abstract function resolve(Collection $arguments, array $data, ShortcodeProcessor $processor): mixed;
+}

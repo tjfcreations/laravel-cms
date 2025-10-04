@@ -16,7 +16,7 @@ trait HasMedia {
 
     public function registerMediaCollections(): void {
         $this->addMediaCollection('default')
-            ->useDisk(config('media-gallery.disk_name'));
+            ->useDisk(config('fd-cms.media.disk_name', 'public'));
     }
 
     public function registerMediaConversions(?Media $media = null): void {

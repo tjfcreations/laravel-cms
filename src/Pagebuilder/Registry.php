@@ -68,9 +68,9 @@ class Registry {
 
         return array_filter($classes, function ($class) use ($parentClass) {
             $vendor = strtok($class, '\\');
-            if($vendor !== 'App' && $vendor !== 'FeenstraDigital') return false;
+            if ($vendor !== 'App' && $vendor !== 'Feenstra') return false;
 
-            if(!class_exists($class)) return false;
+            if (!class_exists($class)) return false;
 
             return is_subclass_of($class, $parentClass);
         });

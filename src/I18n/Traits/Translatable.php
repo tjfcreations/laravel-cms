@@ -13,6 +13,7 @@ trait Translatable {
     use Selectable;
 
     public static function bootTranslatable() {
+        // update translations on save
         static::saved(function (TranslatableInterface $record) {
             $defaultLocale = Locale::getDefault();
 
@@ -26,6 +27,7 @@ trait Translatable {
                 }
             }
 
+            // update machine translations
             foreach ($record->translations as $translation) {
                 $translation->updateMachineTranslations();
             }
