@@ -49,6 +49,9 @@ class PageRenderer {
             $this->data['page']->record = $this->wrap($record);
         }
 
+        // add page
+        $this->data['page']->page = $wrappedPage;
+
         // add page title (after record)
         $this->data['page']->title = $wrappedPage->title;
     }

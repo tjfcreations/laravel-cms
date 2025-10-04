@@ -12,6 +12,12 @@ class TranslateShortcode extends Shortcode {
     public function resolve(Collection $arguments, array $data, ShortcodeProcessor $processor): mixed {
         $key = $arguments->keys()->first();
 
+        // look in custom page translations
+        if (isset($data['page']->page)) {
+            $translation = Translation::get($key, $data['page']->page->unwrap(), 'custom');
+            if ($translation) return $translation->translate();
+        }
+
         // look in custom record translations
         if (isset($data['page']->record)) {
             $translation = Translation::get($key, $data['page']->record->unwrap(), 'custom');
