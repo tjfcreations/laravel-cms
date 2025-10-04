@@ -1,5 +1,5 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Enums;
+namespace Feenstra\CMS\Pagebuilder\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 

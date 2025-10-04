@@ -1,15 +1,15 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Pagebuilder;
+namespace Feenstra\CMS\Pagebuilder;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
+use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Models\Page;
+use Feenstra\CMS\Pagebuilder\Models\Page;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Http\Controllers\DynamicPageController;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Middleware\SetLocale;
+use Feenstra\CMS\Pagebuilder\Http\Controllers\DynamicPageController;
+use Feenstra\CMS\Pagebuilder\Middleware\SetLocale;
 
 class DynamicRouteServiceProvider extends ServiceProvider {
     public function boot(): void {

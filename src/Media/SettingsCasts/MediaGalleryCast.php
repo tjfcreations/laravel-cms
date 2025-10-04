@@ -1,9 +1,9 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Media\SettingsCasts;
+    namespace Feenstra\CMS\Media\SettingsCasts;
 
     use Illuminate\Support\Arr;
-    use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
-    use FeenstraDigital\LaravelCMS\Media\Support\MediaGallery;
+    use Feenstra\CMS\Media\Models\MediaItem;
+    use Feenstra\CMS\Media\Support\MediaGallery;
     use Illuminate\Support\Collection;
 
     class MediaGalleryCast implements \Spatie\LaravelSettings\SettingsCasts\SettingsCast
@@ -18,7 +18,7 @@
             $ids = Arr::wrap($payload);
             if($ids) {
                 foreach($ids as $id) {
-                    $mediaItem = \FeenstraDigital\LaravelCMS\Media\Models\MediaItem::find($id);
+                    $mediaItem = \Feenstra\CMS\Media\Models\MediaItem::find($id);
                     if(!$mediaItem) continue;
                     
                     $gallery->add($mediaItem);

@@ -1,11 +1,11 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Support;
+namespace Feenstra\CMS\Pagebuilder\Support;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Models\Page;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\ShortcodeProcessingWrapper;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
+use Feenstra\CMS\Pagebuilder\Models\Page;
+use Feenstra\CMS\Pagebuilder\Registry;
+use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessingWrapper;
+use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
 use Illuminate\Support\Facades\View;
 use Illuminate\Database\Eloquent\Model;
 

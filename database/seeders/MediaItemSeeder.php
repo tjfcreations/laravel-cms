@@ -1,9 +1,9 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Database\Seeders;
+namespace Feenstra\CMS\Media\Database\Seeders;
 
-use FeenstraDigital\LaravelCMS\Media\Models\MediaGallery;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
+use Feenstra\CMS\Media\Support\MediaGallery;
+use Feenstra\CMS\Media\Models\MediaItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

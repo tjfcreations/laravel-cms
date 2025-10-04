@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Filament\Forms\Components;
+namespace Feenstra\CMS\Media\Filament\Forms\Components;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -12,7 +12,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
 use Illuminate\Support\HtmlString;
 use Filament\Support\Facades\FilamentIcon;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
+use Feenstra\CMS\Media\Models\MediaItem;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class MediaGalleryEditorFileUpload extends FileUpload {

@@ -1,13 +1,13 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Locale\Jobs;
+namespace Feenstra\CMS\Locale\Jobs;
 
-use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
+use Feenstra\CMS\Locale\Models\Translation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
+use Feenstra\CMS\Locale\Models\Locale;
 
 class GenerateMachineTranslations implements ShouldQueue
 {

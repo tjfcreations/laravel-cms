@@ -1,9 +1,9 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder;
+namespace Feenstra\CMS\Pagebuilder;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Support\Block;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\Shortcode;
+use Feenstra\CMS\Pagebuilder\Support\Block;
+use Feenstra\CMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;

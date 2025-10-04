@@ -1,7 +1,7 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Media;
+namespace Feenstra\CMS\Media;
 
-use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
+use Feenstra\CMS\Media\Models\MediaItem;
 use Illuminate\Contracts\Support\Arrayable;
 
 class MediaUploadItem implements Arrayable {

@@ -1,8 +1,8 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource\Pages;
+namespace Feenstra\CMS\Locale\Filament\Resources\TranslationResource\Pages;
 
-use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource;
+use Feenstra\CMS\Locale\Filament\Resources\TranslationResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;

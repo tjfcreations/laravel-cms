@@ -1,9 +1,9 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources;
+namespace Feenstra\CMS\Locale\Filament\Resources;
 
-use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\LocaleResource\Pages;
-use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
+use Feenstra\CMS\Locale\Filament\Resources\LocaleResource\Pages;
+use Feenstra\CMS\Locale\Models\Locale;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

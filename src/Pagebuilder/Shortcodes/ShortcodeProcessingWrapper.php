@@ -1,7 +1,7 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes;
+    namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Support\PageRenderer;
+    use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
     use Illuminate\Database\Eloquent\Model;
 
     class ShortcodeProcessingWrapper

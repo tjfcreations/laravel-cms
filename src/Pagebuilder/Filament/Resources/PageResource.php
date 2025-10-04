@@ -1,24 +1,24 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources;
+namespace Feenstra\CMS\Pagebuilder\Filament\Resources;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\PageResource\Pages;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Models\Page;
+use Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource\Pages;
+use Feenstra\CMS\Pagebuilder\Models\Page;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
+use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
 use Filament\Tables\Columns;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Forms\Components\Pagebuilder;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Forms\Components\Pageheader;
+use Feenstra\CMS\Pagebuilder\Filament\Forms\Components\Pagebuilder;
+use Feenstra\CMS\Pagebuilder\Filament\Forms\Components\Pageheader;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
+use Feenstra\CMS\Pagebuilder\Registry;
 
 class PageResource extends Resource
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Interfaces;
+namespace Feenstra\CMS\Media\Interfaces;
 
 use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 

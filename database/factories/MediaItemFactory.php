@@ -1,10 +1,10 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Database\Factories;
+namespace Feenstra\CMS\Media\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaEmbed;
+use Feenstra\CMS\Media\Models\MediaEmbed;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MediaItem>

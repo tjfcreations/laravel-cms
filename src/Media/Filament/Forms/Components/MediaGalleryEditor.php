@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Filament\Forms\Components;
+namespace Feenstra\CMS\Media\Filament\Forms\Components;
 
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Actions\Action;

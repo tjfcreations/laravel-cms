@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Media\Commands;
+    namespace Feenstra\CMS\Media\Commands;
 
     use Spatie\MediaLibrary\Conversions\Commands\RegenerateCommand as SpatieRegenerateCommand;
 

@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale\Http\Middleware;
+    namespace Feenstra\CMS\Locale\Http\Middleware;
 
     use Closure;
     use Illuminate\Support\Facades\App;

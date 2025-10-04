@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale\Models;
+    namespace Feenstra\CMS\Locale\Models;
 
     use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

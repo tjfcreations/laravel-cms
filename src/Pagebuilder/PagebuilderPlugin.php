@@ -1,12 +1,12 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder;
+namespace Feenstra\CMS\Pagebuilder;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\LocaleResource;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\PageResource;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\TranslationResource;
+use Feenstra\CMS\Pagebuilder\Filament\Resources\LocaleResource;
+use Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource;
+use Feenstra\CMS\Pagebuilder\Filament\Resources\TranslationResource;
 
 class PagebuilderPlugin implements Plugin {
     public function getId(): string {

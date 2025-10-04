@@ -1,9 +1,9 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale\Traits;
+    namespace Feenstra\CMS\Locale\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Traits\Selectable;
+use Feenstra\CMS\Locale\Models\Translation;
+use Feenstra\CMS\Pagebuilder\Traits\Selectable;
 
     trait Translatable {
         use Selectable;

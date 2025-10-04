@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Commands;
+namespace Feenstra\CMS\Pagebuilder\Commands;
 
 use Illuminate\Console\Command;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;

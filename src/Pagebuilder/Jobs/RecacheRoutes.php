@@ -1,5 +1,5 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Jobs;
+namespace Feenstra\CMS\Pagebuilder\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

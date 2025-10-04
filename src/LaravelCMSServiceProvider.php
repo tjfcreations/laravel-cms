@@ -1,14 +1,14 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS;
+namespace Feenstra\CMS;
 
-use FeenstraDigital\LaravelCMS\Media\Commands\RegenerateMediaCommand;
-use FeenstraDigital\LaravelCMS\Media\MediaServiceProvider;
+use Feenstra\CMS\Media\Commands\RegenerateMediaCommand;
+use Feenstra\CMS\Media\MediaServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Commands\MakePagebuilderBlock;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Commands\MakePagebuilderShortcode;
-use FeenstraDigital\LaravelCMS\Pagebuilder\PagebuilderServiceProvider;
+use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderBlock;
+use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderShortcode;
+use Feenstra\CMS\Pagebuilder\PagebuilderServiceProvider;
 
 class LaravelCMSServiceProvider extends PackageServiceProvider {
     public function configurePackage(Package $package): void {

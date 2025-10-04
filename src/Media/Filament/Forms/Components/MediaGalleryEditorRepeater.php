@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Filament\Forms\Components;
+namespace Feenstra\CMS\Media\Filament\Forms\Components;
 
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -11,15 +11,15 @@ use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Facades\Blade;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
+use Feenstra\CMS\Media\Models\MediaItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Filament\Pages\SettingsPage;
 use Spatie\LaravelSettings\Models\SettingsProperty;
 use Spatie\LaravelSettings\Settings;
-use FeenstraDigital\LaravelCMS\Media\SettingsCasts\MediaGalleryCast;
-use FeenstraDigital\LaravelCMS\Media\Support\SettingsPropertyMediaContainer;
+use Feenstra\CMS\Media\SettingsCasts\MediaGalleryCast;
+use Feenstra\CMS\Media\Support\SettingsPropertyMediaContainer;
 
 class MediaGalleryEditorRepeater extends Repeater {
     protected ?MediaGalleryEditor $parent = null;

@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Media\Support;
+    namespace Feenstra\CMS\Media\Support;
 
     use Illuminate\Support\Collection;
 

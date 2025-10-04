@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Traits;
+    namespace Feenstra\CMS\Pagebuilder\Traits;
 
     use Illuminate\Support\Str;
 

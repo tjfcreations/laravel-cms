@@ -1,12 +1,12 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale\Filament\Actions;
+    namespace Feenstra\CMS\Locale\Filament\Actions;
 
-    use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
+    use Feenstra\CMS\Locale\Interfaces\TranslatableInterface;
     use Filament\Actions\Action;
     use Filament\Support\Colors\Color;
     use Filament\Forms\Components\Tabs;
-    use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
-    use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
+    use Feenstra\CMS\Locale\Models\Locale;
+    use Feenstra\CMS\Locale\Models\Translation;
     use Filament\Forms;
     use Filament\Forms\Components\KeyValue;
     use Filament\Forms\Form;

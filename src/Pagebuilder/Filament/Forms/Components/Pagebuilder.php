@@ -1,10 +1,10 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Forms\Components;
+    namespace Feenstra\CMS\Pagebuilder\Filament\Forms\Components;
 
     use Filament\Forms\Components\Builder;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Support\Block;
+    use Feenstra\CMS\Pagebuilder\Support\Block;
     use Filament\Forms\Form;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
+    use Feenstra\CMS\Pagebuilder\Registry;
 
     class Pagebuilder extends Builder {
         protected function setUp(): void {

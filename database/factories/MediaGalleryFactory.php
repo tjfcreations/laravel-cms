@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Database\Factories;
+namespace Feenstra\CMS\Media\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

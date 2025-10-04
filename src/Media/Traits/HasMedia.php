@@ -1,10 +1,10 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Traits;
+namespace Feenstra\CMS\Media\Traits;
 
 use Spatie\MediaLibrary\InteractsWithMedia as SpatieInteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
+use Feenstra\CMS\Media\Models\MediaItem;
 use Spatie\Image\Enums\Fit;
 
 trait HasMedia {

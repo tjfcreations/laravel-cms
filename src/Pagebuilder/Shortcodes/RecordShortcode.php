@@ -1,7 +1,7 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes;
+namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\Shortcode;
+use Feenstra\CMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Support\Collection;
 
 class RecordShortcode extends Shortcode {

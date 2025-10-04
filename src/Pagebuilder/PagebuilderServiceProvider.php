@@ -1,9 +1,9 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder;
+namespace Feenstra\CMS\Pagebuilder;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
-use FeenstraDigital\LaravelCMS\Locale\Http\Middleware\SetLocale;
+use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
+use Feenstra\CMS\Locale\Http\Middleware\SetLocale;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 

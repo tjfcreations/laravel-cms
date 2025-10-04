@@ -1,8 +1,8 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale\Models;
+    namespace Feenstra\CMS\Locale\Models;
 
     use Illuminate\Database\Eloquent\Model;
-    use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
+    use Feenstra\CMS\Locale\Interfaces\TranslatableInterface;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Database\Eloquent\Relations\MorphMany;
     use Illuminate\Database\Eloquent\Relations\MorphTo;

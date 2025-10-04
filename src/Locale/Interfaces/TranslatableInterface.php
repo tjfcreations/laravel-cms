@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale\Interfaces;
+    namespace Feenstra\CMS\Locale\Interfaces;
 
     use Illuminate\Database\Eloquent\Relations\MorphMany;
 

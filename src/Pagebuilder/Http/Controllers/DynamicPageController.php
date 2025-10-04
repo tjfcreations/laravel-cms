@@ -1,7 +1,7 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Http\Controllers;
+    namespace Feenstra\CMS\Pagebuilder\Http\Controllers;
 
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Models\Page;
+    use Feenstra\CMS\Pagebuilder\Models\Page;
 
     class DynamicPageController {
         public function show()  {

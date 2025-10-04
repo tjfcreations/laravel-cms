@@ -1,11 +1,11 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Support;
+    namespace Feenstra\CMS\Pagebuilder\Support;
 
     use Illuminate\Support\Collection;
     use Illuminate\Support\Str;
     use Illuminate\Support\Facades\Blade;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
+    use Feenstra\CMS\Pagebuilder\Registry;
+    use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
 
     abstract class Block {
         public static string $view;

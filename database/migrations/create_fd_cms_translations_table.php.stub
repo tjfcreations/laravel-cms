@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Models\Locale;
+use Feenstra\CMS\Pagebuilder\Models\Locale;
 
 return new class extends Migration
 {

@@ -1,11 +1,11 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Models;
+    namespace Feenstra\CMS\Pagebuilder\Models;
 
-    use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
-    use FeenstraDigital\LaravelCMS\Locale\Traits\Translatable;
+    use Feenstra\CMS\Locale\Interfaces\TranslatableInterface;
+    use Feenstra\CMS\Locale\Traits\Translatable;
     use Illuminate\Database\Eloquent\Model;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Enums\PageTypeEnum;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Support\PageRenderer;
+    use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
+    use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
 
     class Page extends Model implements TranslatableInterface
     {

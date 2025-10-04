@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS;
+namespace Feenstra\CMS;
 
 use Filament\Contracts\Plugin;
 use Filament\Panel;

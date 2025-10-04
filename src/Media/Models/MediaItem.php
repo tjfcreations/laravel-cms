@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Models;
+namespace Feenstra\CMS\Media\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Image\Enums\Fit;

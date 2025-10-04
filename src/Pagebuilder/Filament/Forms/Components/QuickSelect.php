@@ -1,5 +1,5 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Forms\Components;
+    namespace Feenstra\CMS\Pagebuilder\Filament\Forms\Components;
 
     use Filament\Forms\Components\Grid;
     use Filament\Forms\Components\Select;

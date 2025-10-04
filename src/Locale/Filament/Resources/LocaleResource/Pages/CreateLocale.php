@@ -1,8 +1,8 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources\LocaleResource\Pages;
+namespace Feenstra\CMS\Locale\Filament\Resources\LocaleResource\Pages;
 
-use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\LocaleResource;
+use Feenstra\CMS\Locale\Filament\Resources\LocaleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;

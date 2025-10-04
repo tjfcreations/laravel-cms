@@ -1,12 +1,12 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes;
+    namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
     use Thunder\Shortcode\HandlerContainer\HandlerContainer;
     use Thunder\Shortcode\Parser\RegularParser;
     use Thunder\Shortcode\Processor\Processor;
     use Thunder\Shortcode\Shortcode\ShortcodeInterface;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Registry;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Support\PageRenderer;
+    use Feenstra\CMS\Pagebuilder\Registry;
+use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
 
     class ShortcodeProcessor {
         protected PageRenderer $pageRenderer;

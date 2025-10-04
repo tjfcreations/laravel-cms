@@ -1,7 +1,7 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Media\Traits;
+namespace Feenstra\CMS\Media\Traits;
 
-use FeenstraDigital\LaravelCMS\Media\Filament\Forms\Components\MediaGalleryEditorRepeater;
+use Feenstra\CMS\Media\Filament\Forms\Components\MediaGalleryEditorRepeater;
 
 trait HasMediaGallerySettings {
     public function saveMediaGallerySettings(): void

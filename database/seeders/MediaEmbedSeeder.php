@@ -1,10 +1,10 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Database\Seeders;
+namespace Feenstra\CMS\Media\Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaEmbed;
+use Feenstra\CMS\Media\Models\MediaEmbed;
 
 class MediaEmbedSeeder extends Seeder
 {

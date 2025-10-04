@@ -1,9 +1,9 @@
 <?php
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes;
+namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Shortcodes\Shortcode;
+use Feenstra\CMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Support\Collection;
-use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
+use Feenstra\CMS\Locale\Models\Translation;
 
 class TranslateShortcode extends Shortcode {
     public static string $name = 'translate';

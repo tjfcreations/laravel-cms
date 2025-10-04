@@ -1,6 +1,6 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media\Http\Livewire;
+namespace Feenstra\CMS\Media\Http\Livewire;
 
 use Livewire\Component;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;

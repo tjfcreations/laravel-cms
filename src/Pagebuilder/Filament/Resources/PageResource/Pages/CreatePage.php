@@ -1,12 +1,12 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\PageResource\Pages;
+namespace Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource\Pages;
 
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\PageResource;
+use Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Artisan;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Jobs\RecacheRoutes;
+use Feenstra\CMS\Pagebuilder\Jobs\RecacheRoutes;
 
 class CreatePage extends CreateRecord
 {

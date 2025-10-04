@@ -1,8 +1,8 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Pagebuilder\Support;
+    namespace Feenstra\CMS\Pagebuilder\Support;
 
     use Illuminate\Support\Collection;
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Forms;
+    use Feenstra\CMS\Pagebuilder\Filament\Forms;
 
     class QuickSelect {
         public string $model;

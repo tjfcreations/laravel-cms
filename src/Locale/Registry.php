@@ -1,9 +1,9 @@
 <?php
-    namespace FeenstraDigital\LaravelCMS\Locale;
+    namespace Feenstra\CMS\Locale;
 
-    use FeenstraDigital\LaravelCMS\Pagebuilder\Registry as PagebuilderRegistry;
+    use Feenstra\CMS\Pagebuilder\Registry as PagebuilderRegistry;
     use Illuminate\Support\Collection;
-    use FeenstraDigital\LaravelCMS\Locale\Interfaces\TranslatableInterface;
+    use Feenstra\CMS\Locale\Interfaces\TranslatableInterface;
 
     class Registry { 
         public static function translatables(): Collection {

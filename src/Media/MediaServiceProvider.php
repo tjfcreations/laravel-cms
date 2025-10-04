@@ -1,17 +1,17 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Media;
+namespace Feenstra\CMS\Media;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use FeenstraDigital\LaravelCMS\Media\Http\Livewire\MediaUpload;
-use FeenstraDigital\LaravelCMS\Media\Commands\RegenerateCommand;
+use Feenstra\CMS\Media\Http\Livewire\MediaUpload;
+use Feenstra\CMS\Media\Commands\RegenerateCommand;
 use Illuminate\Support\Facades\Config;
-use FeenstraDigital\LaravelCMS\Media\Support\HashedPathGenerator;
-use FeenstraDigital\LaravelCMS\Media\Support\HashedFileNamer;
-use FeenstraDigital\LaravelCMS\Media\Models\MediaItem;
-use FeenstraDigital\LaravelCMS\Media\Support\MediaGallery;
-use FeenstraDigital\LaravelCMS\Media\SettingsCasts\MediaGalleryCast;
+use Feenstra\CMS\Media\Support\HashedPathGenerator;
+use Feenstra\CMS\Media\Support\HashedFileNamer;
+use Feenstra\CMS\Media\Models\MediaItem;
+use Feenstra\CMS\Media\Support\MediaGallery;
+use Feenstra\CMS\Media\SettingsCasts\MediaGalleryCast;
 use Illuminate\Support\ServiceProvider;
 
 class MediaServiceProvider extends ServiceProvider {

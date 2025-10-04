@@ -1,10 +1,10 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\PageResource\Pages;
+namespace Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource\Pages;
 
-use FeenstraDigital\LaravelCMS\Locale\Filament\Actions\TranslateAction;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Filament\Resources\PageResource;
-use FeenstraDigital\LaravelCMS\Pagebuilder\Jobs\RecacheRoutes;
+use Feenstra\CMS\Locale\Filament\Actions\TranslateAction;
+use Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource;
+use Feenstra\CMS\Pagebuilder\Jobs\RecacheRoutes;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Artisan;

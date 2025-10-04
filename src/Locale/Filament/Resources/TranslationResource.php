@@ -1,10 +1,10 @@
 <?php
 
-namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources;
+namespace Feenstra\CMS\Locale\Filament\Resources;
 
-use FeenstraDigital\LaravelCMS\Locale\Filament\Actions\TranslateAction;
-use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource\Pages;
-use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
+use Feenstra\CMS\Locale\Filament\Actions\TranslateAction;
+use Feenstra\CMS\Locale\Filament\Resources\TranslationResource\Pages;
+use Feenstra\CMS\Locale\Models\Translation;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -13,8 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
-use FeenstraDigital\LaravelCMS\Locale\Registry;
+use Feenstra\CMS\Locale\Models\Locale;
+use Feenstra\CMS\Locale\Registry;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Tabs;
 use Filament\Support\Colors\Color;
