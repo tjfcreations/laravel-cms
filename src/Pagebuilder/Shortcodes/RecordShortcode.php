@@ -12,11 +12,14 @@ class RecordShortcode extends Shortcode {
     public function resolve(Collection $arguments, array $data, ShortcodeProcessor $processor): mixed {
         $attribute = $arguments->keys()->first();
 
-        $record = @$data['page']->record->unwrap();
-        if ($record instanceof TranslatableInterface) {
-            $result = $record->translate($attribute);
-        } else {
-            $result = $record->$attribute;
+        $result = null;
+        if (isset($data['page']->record)) {
+            $record = $data['page']->record->unwrap();
+            if ($record instanceof TranslatableInterface) {
+                $result = $record->translate($attribute);
+            } else {
+                $result = $record->$attribute;
+            }
         }
 
         return $processor->process($result);
