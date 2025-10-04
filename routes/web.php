@@ -1,6 +1,6 @@
 <?php
     use Illuminate\Support\Facades\Route;
-    use Feenstra\CMS\Locale\Models\Locale;
+    use Feenstra\CMS\I18n\Models\Locale;
 
     // web middleware is needed for sessions
     Route::middleware('web')->group(function() {

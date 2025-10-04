@@ -13,8 +13,8 @@ class CMSPlugin implements Plugin {
     public function register(Panel $panel): void {
         $panel
             ->resources([
-                Locale\Filament\Resources\LocaleResource::class,
-                Locale\Filament\Resources\TranslationResource::class,
+                I18n\Filament\Resources\LocaleResource::class,
+                I18n\Filament\Resources\TranslationResource::class,
                 
                 Pagebuilder\Filament\Resources\PageResource::class
             ]);

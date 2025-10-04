@@ -3,7 +3,7 @@
 namespace Feenstra\CMS\Pagebuilder;
 
 use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
-use Feenstra\CMS\Locale\Http\Middleware\SetLocale;
+use Feenstra\CMS\I18n\Http\Middleware\SetLocale;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 

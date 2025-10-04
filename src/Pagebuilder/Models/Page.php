@@ -1,8 +1,8 @@
 <?php
     namespace Feenstra\CMS\Pagebuilder\Models;
 
-    use Feenstra\CMS\Locale\Interfaces\TranslatableInterface;
-    use Feenstra\CMS\Locale\Traits\Translatable;
+    use Feenstra\CMS\I18n\Interfaces\TranslatableInterface;
+    use Feenstra\CMS\I18n\Traits\Translatable;
     use Illuminate\Database\Eloquent\Model;
     use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
     use Feenstra\CMS\Pagebuilder\Support\PageRenderer;

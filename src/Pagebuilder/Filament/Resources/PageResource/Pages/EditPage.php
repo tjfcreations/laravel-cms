@@ -2,7 +2,7 @@
 
 namespace Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource\Pages;
 
-use Feenstra\CMS\Locale\Filament\Actions\TranslateAction;
+use Feenstra\CMS\I18n\Filament\Actions\TranslateAction;
 use Feenstra\CMS\Pagebuilder\Filament\Resources\PageResource;
 use Feenstra\CMS\Pagebuilder\Jobs\RecacheRoutes;
 use Filament\Actions;

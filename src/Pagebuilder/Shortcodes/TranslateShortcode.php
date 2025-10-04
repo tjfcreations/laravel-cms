@@ -3,7 +3,7 @@ namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 
 use Feenstra\CMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Support\Collection;
-use Feenstra\CMS\Locale\Models\Translation;
+use Feenstra\CMS\I18n\Models\Translation;
 
 class TranslateShortcode extends Shortcode {
     public static string $name = 'translate';

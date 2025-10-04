@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('localized_name');
             $table->string('flag_path')->nullable();
             $table->boolean('is_default')->default(false);
+            $table->boolean('is_machine_translatable')->default(false);
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class CMSServiceProvider extends PackageServiceProvider {
             ->discoversMigrations()
             ->hasRoute('web')
             ->hasViews('fd-cms')
+            ->hasConfigFile('fd-cms')
             ->hasCommands([
                 // media
                 RegenerateMediaCommand::class,
