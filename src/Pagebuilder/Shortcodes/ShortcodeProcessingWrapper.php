@@ -16,15 +16,18 @@
         }
 
         public function __get($name) {
-            $value = $this->record->$name;
-            return $this->resolve($name, $value);
+            return $this->process($this->record->$name);
+        }
+
+        public function __call($name, $arguments) {
+            return $this->record->$name(...$arguments);
         }
 
         public function getRecord() {
             return $this->record;
         }
 
-        protected function resolve($name, $value)
+        protected function process($value)
         {
             if(is_string($value)) {
                 return $this->shortcodeProcessor->process($value);

@@ -18,7 +18,7 @@ class LocaleResource extends Resource
 
     protected static ?string $model = Locale::class;
 
-    protected static ?string $navigationGroup = 'Vertalingen';
+    protected static ?string $navigationGroup = 'Vertalen';
     protected static ?string $navigationIcon = 'heroicon-o-language';
 
     protected static ?string $label = 'taal';

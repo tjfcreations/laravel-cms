@@ -10,8 +10,20 @@ use Illuminate\Support\Collection;
 
         protected $guarded = [];
 
-        public static function allNotDefault(): Collection {
-            return static::whereNot('is_default', true)->get();
+        public static function allNotDefault($columns = ['*']) {
+            return parent::where('is_default', false)->get($columns);
+        }
+        
+        public static function allWithDefaultLast($columns = ['*']) {
+            return parent::all($columns)->sortBy('is_default');
+        }
+
+        public static function getDefault(): self {
+            return static::where('is_default', true)->first();
+        }
+
+        public function isDefault(): bool {
+            return !!$this->is_default;
         }
 
         public function setAsDefault() {

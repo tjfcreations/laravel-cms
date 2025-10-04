@@ -14,6 +14,8 @@
     use Illuminate\Support\Str;
     use Illuminate\Support\Arr;
     use Filament\Forms\Set;
+    use Filament\Forms\Components\Component;
+    use Illuminate\Support\Collection;
 
     class TranslateAction extends Action {
         protected array $labels = [];
@@ -35,6 +37,7 @@
                 ->fillForm(function(TranslatableInterface $record) {
                     return $this->getData($record);
                 })
+                ->modalSubmitActionLabel('Opslaan')
                 ->action(function (TranslatableInterface $record, array $data) {
                     $this->handleSave($record, $data);
                 })
@@ -86,33 +89,30 @@
             return $data;
         }
 
-        protected function handleSave(TranslatableInterface $record, array $data) {
-            $attributeData = collect($data)->except('_custom')->toArray();
-            $customData = $data['_custom'];
+        protected function handleSave(TranslatableInterface $record, array $rawData) {
+            $dataByGroup = [
+                '' => collect($rawData)->except('_custom')->toArray(),
+                'custom' => $rawData['_custom']
+            ];
 
-            // save attribute translations
-            foreach($attributeData as $key => $translations) {
-                $translation = Translation::get($key, $record);
+            dd($dataByGroup);
 
-                foreach($translations as $locale => $value) {
-                    // ignore if translation was not changed
-                    if($translation->translate($locale) === $value) continue;
-                    $translation->set($locale, $value, 'user');
-                }
-            }
+            // save translations
+            foreach($dataByGroup as $group => $data) {
+                foreach($data as $key => $values) {
+                    $translation = Translation::get($key, $record, $group);
 
-            // delete all custom translations
-            $record->translations()->where('group', 'custom')->delete();
+                    $translation->clear(false);
 
-            // save custom translations
-            foreach($customData as $locale => $items) {
-                foreach($items as $key => $value) {
-                    $key = Str::slug($key, '_');
-                    $translation = Translation::get($key, $record, 'custom');
+                    foreach($values as $locale => $value) {
+                        // ignore if translation was not changed
+                        if($translation->translate($locale) === $value) continue;
+                        $translation->set($locale, $value, 'user', false);
+                    }
 
-                    // ignore if translation was not changed
-                    if($translation->translate($locale) === $value) continue;
-                    $translation->set($locale, $value, 'user');
+                    $translation->save();
+
+                    $translation->updateMachineTranslations();
                 }
             }
         }
@@ -120,7 +120,7 @@
         protected function getTabs() {
             return Tabs::make()
                 ->tabs(function() {
-                    return Locale::all()->map(function($locale) {
+                    return Locale::allWithDefaultLast()->map(function($locale) {
                         return $this->getTab($locale);
                     })->toArray();
                 });
@@ -130,21 +130,49 @@
             return Tabs\Tab::make($locale->name)
                 ->schema(function(TranslatableInterface $record) use($locale) {
                     return [
-                        ...$this->makeAttributeInputs($record, $locale),
+                        ...$this->makeInputs($record, $locale),
                         $this->makeCustomTranslationsEditor($record, $locale)
                     ];
                 });
         }
 
-        protected function makeAttributeInputs(TranslatableInterface $record, Locale $locale): array {
+        protected function makeInputs(TranslatableInterface $record, Locale $locale): array {
             $translatableAttributes = $record->getTranslatableAttributes();
 
-            return collect($translatableAttributes)->map(function($attribute) use($locale) {
+            return collect($translatableAttributes)->map(function($attribute) use($locale, $record) {
+                $translation = Translation::get($attribute, $record);
                 $label = $this->labels[$attribute] ?? Str::ucfirst($attribute);
 
-                return $this->makeAttributeInput($attribute, $locale)
+                $input = $this->makeInput("{$attribute}.{$locale->code}", $translation, $locale, $this->isRichAttribute($attribute))
                     ->label("{$label} ({$locale->name})");
+
+                // hide input for default locale if empty
+                if($locale->isDefault()) {
+                    $input->hidden(fn($get) => empty($get("{$attribute}.{$locale->code}")));
+                }
+                                
+                return $input;
             })->toArray();
+        }
+
+        public static function makeInput(string $name, Translation $translation, Locale $locale, bool $isRich = false) {
+            if($isRich) {
+                $input = Forms\Components\RichEditor::make($name);
+            } else {
+                $input = Forms\Components\TextInput::make($name)
+                    ->suffixAction(
+                        Forms\Components\Actions\Action::make('reset')
+                            ->icon('heroicon-m-trash')
+                            ->color(Color::Red)
+                            ->action(function (Set $set, $state) use($name) {
+                                $set($name, null);
+                            })
+                    );
+            }
+
+            self::updateInputHint($input, $translation, $locale);
+
+            return $input;
         }
 
         protected function makeCustomTranslationsEditor(TranslatableInterface $record, Locale $locale): KeyValue {
@@ -152,26 +180,20 @@
                 ->label("Lokale vertalingen ({$locale->name})")
                 ->keyLabel('Vertaalsleutel')
                 ->valueLabel('Vertaling')
+                ->hintColor('primary')
                 ->hintIcon(
                     'heroicon-m-question-mark-circle', 
                     tooltip: str('Met lokale vertalingen kun je makkelijk je pagina-inhoud vertalen. Gebruik [translate vertaalsleutel] in je pagina-inhoud om een lokale vertaling te tonen.'));
         }
 
-        protected function makeAttributeInput(string $attribute, Locale $locale) {
-            $name = "{$attribute}.{$locale->code}";
-
-            if($this->isRichAttribute($attribute)) {
-                return Forms\Components\RichEditor::make($name);
+        public static function updateInputHint(Component $component, Translation $translation, Locale $locale) {
+            if($translation->isMachineTranslation($locale->code)) {
+                $component
+                    ->hint('Automatisch gegenereerd')
+                    ->hintIcon('heroicon-s-bug-ant', tooltip: 'Deze vertaling is automatisch gegenereerd.')
+                    ->hintColor(Color::Blue);
             }
 
-            return Forms\Components\TextInput::make($name)
-                ->suffixAction(
-                    Forms\Components\Actions\Action::make('reset')
-                        ->icon('heroicon-m-trash')
-                        ->color(Color::Red)
-                        ->action(function (Set $set, $state) use($name) {
-                            $set($name, null);
-                        })
-                );
+            return $component;
         }
     }

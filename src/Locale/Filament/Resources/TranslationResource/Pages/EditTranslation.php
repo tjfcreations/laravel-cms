@@ -5,19 +5,15 @@ namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResour
 use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditTranslation extends EditRecord
 {
     protected static string $resource = TranslationResource::class;
 
-    protected function mutateFormDataBeforeFill(array $data): array
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        return TranslationResource::packData($data);
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        return TranslationResource::unpackData($data);
+        return TranslationResource::handleSave($data);
     }
 
     protected function getHeaderActions(): array

@@ -2,6 +2,7 @@
 
 namespace FeenstraDigital\LaravelCMS\Locale\Filament\Resources;
 
+use FeenstraDigital\LaravelCMS\Locale\Filament\Actions\TranslateAction;
 use FeenstraDigital\LaravelCMS\Locale\Filament\Resources\TranslationResource\Pages;
 use FeenstraDigital\LaravelCMS\Locale\Models\Translation;
 use Filament\Forms;
@@ -15,6 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use FeenstraDigital\LaravelCMS\Locale\Models\Locale;
 use FeenstraDigital\LaravelCMS\Locale\Registry;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Tabs;
+use Filament\Support\Colors\Color;
+use Filament\Forms\Set;
 
 class TranslationResource extends Resource
 {
@@ -22,7 +26,7 @@ class TranslationResource extends Resource
 
     protected static ?string $model = Translation::class;
 
-    protected static ?string $navigationGroup = 'Vertalingen';
+    protected static ?string $navigationGroup = 'Vertalen';
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $label = 'vertaling';
@@ -32,43 +36,22 @@ class TranslationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\ToggleButtons::make('is_global')
-                    ->label('Globale vertaling')
-                    ->helperText('Een globale vertaling kan overal op de site worden gebruikt.')
-                    ->boolean()
-                    ->inline()
-                    ->grouped()
-                    ->live()
-                    ->default(true),
-                Forms\Components\Select::make('locale')
-                    ->label('Taal')
-                    ->options(Locale::all()->pluck('name', 'code'))
-                    ->placeholder('Kies een taal...')
-                    ->required(),
                 Forms\Components\TextInput::make('key')
                     ->label('Sleutel')
                     ->placeholder('title')
-                    ->visible(fn(Get $get) => $get('is_global'))
                     ->columnSpanFull()
                     ->required(),
-                Forms\Components\Textarea::make('value')
-                    ->label('Vertaling')
-                    ->columnSpanFull()
-                    ->required()
+                self::getTabs()
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->whereNull('record_id'))
             ->columns([
-                TextColumn::make('locale')
-                    ->label('Taal')
-                    ->formatStateUsing(fn(string $state) => Locale::where('code', $state)->first()?->name),
                 TextColumn::make('key')
-                    ->label('Sleutel/attribuut'),
-                TextColumn::make('value')
-                    ->label('Vertaling')
+                    ->label('Sleutel/attribuut')
             ])
             ->filters([
                 //
@@ -79,6 +62,26 @@ class TranslationResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
+    }
+
+    protected static function getTabs() {
+        return Tabs::make()
+            ->tabs(function() {
+                return Locale::all()->map(function($locale) {
+                    return self::getTab($locale);
+                })->toArray();
+            })
+            ->columnSpanFull();
+    }
+
+    protected static function getTab(Locale $locale) {
+        return Tabs\Tab::make($locale->name)
+            ->schema(function(Translation $record) use($locale) {
+                return [
+                    TranslateAction::makeInput("translations.{$locale->code}.value", $record, $locale, false)
+                        ->label("Vertaling ({$locale->name})")
+                ];
+            });
     }
 
     public static function getRelations(): array
@@ -98,37 +101,24 @@ class TranslationResource extends Resource
     }
 
     /**
-     * Unpack data, before updating the database.
+     * Custom method, called from EditTranslation and CreateTranslation pages.
      */
-    public static function unpackData(array $data) {
-        // model
-        $model = @json_decode(@$data['model'], true);
-        $data['model_type'] = @$model['model_type'];
-        $data['model_id'] = @$model['model_id'];
-        unset($data['model']);
-        
-        // is_global
-        unset($data['is_global']);
+    public static function handleSave(array $data) {
+        $translation = Translation::get($data['key']);
 
-        return $data;
-    }
+        // save translations
+        foreach($data['translations'] as $locale => $data) {
+            $value = $data['value'];
 
-    /**
-     * Pack data, before filling the form.
-     */
-    public static function packData(array $data) {
-        // model
-        if(isset($data['model_type']) && isset($data['model_id'])) {
-            $data['model'] = json_encode(['model_type' => @$data['model_type'], 'model_id' => @$data['model_id']]);
-            unset($data['model_type']);
-            unset($data['model_id']);
-        } else {
-            $data['model'] = null;
+            // ignore if translation was not changed
+            if($translation->translate($locale) === $value) continue;
+            $translation->set($locale, $value, 'user', false);
         }
 
-        // is_global
-        $data['is_global'] = !isset($data['model']);
+        $translation->save();
+        
+        $translation->updateMachineTranslations();
 
-        return $data;
+        return $translation;
     }
 }

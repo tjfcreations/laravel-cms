@@ -8,6 +8,8 @@
     use Illuminate\Database\Eloquent\Relations\MorphTo;
     use Illuminate\Support\Arr;
     use Illuminate\Support\Str;
+    use Carbon\Carbon;
+    use Illuminate\Support\Facades\Log;
 
     class Translation extends Model
     {
@@ -26,7 +28,7 @@
         }
 
         /**
-         * Get the translation value (current language by default).
+         * Get the translation value (current locale by default).
          */
         public function translate(?string $locale = null): ?string {
             $locale = $locale ?? app()->currentLocale();
@@ -42,29 +44,38 @@
         }
 
         /**
-         * Check if a translation exists for the given locale.
+         * Check if a translation exists for the given locale (current locale by default).
          */
-        public function has(string $locale): bool {
+        public function has(?string $locale = null): bool {
+            $locale = $locale ?? app()->currentLocale();
             return !!$this->translate($locale);
         }
 
         /**
          * Update the translation for a given locale.
          */
-        public function set(string $locale, mixed $value = null, ?string $source = null) {
+        public function set(string $locale, mixed $value = null, ?string $source = null, bool $save = true): self {
             $value = is_string($value) ? $value : null;
 
-            if(is_string($value)) {
-                $translations = (array) $this->translations;
-                Arr::set($translations, "$locale.value", $value);
-                $this->translations = $translations;
+            $translations = (array) $this->translations;
+            Arr::set($translations, "$locale.value", $value);
+            $this->translations = $translations;
 
-                if(is_string($source)) {
-                    $this->setMetaProperty($locale, 'source', $source, false);
-                }
+            if(is_string($source)) {
+                $this->setMetaProperty($locale, 'source', $source, false);
             }
 
-            $this->save();
+            $this->setMetaProperty($locale, 'updated_at', Carbon::now()->toIso8601String());
+
+            if($save) $this->save();
+
+            return $this;
+        }
+
+        public function clear(bool $save = true): self {
+            $this->translations = [];
+
+            if($save) $this->save();
 
             return $this;
         }
@@ -72,8 +83,8 @@
         /**
          * Remove the translation for a given locale.
          */
-        public function remove(string $locale) {
-            return $this->set($locale, null);
+        public function remove(string $locale, bool $save = true): self {
+            return $this->set($locale, null, null, $save);
         }
 
         public function getMeta(string $locale): array {
@@ -88,9 +99,7 @@
             Arr::set($translations, "$locale.meta", $mergedMeta);
             $this->translations = $translations;
 
-            if($save) {
-                $this->save();
-            }
+            if($save) $this->save();
 
             return $this;
         }
@@ -103,15 +112,48 @@
             return $this->setMeta($locale, [ $key => $value ], $save);
         }
 
+        public function isMachineTranslation(string $locale): bool {
+            return $this->has($locale) && $this->getMetaProperty($locale, 'source') === 'machine';
+        }
+        
         public function isUserTranslation(string $locale): bool {
-            return $this->getMetaProperty($locale, 'source') === 'user';
+            return $this->has($locale) && $this->getMetaProperty($locale, 'source') === 'user';
+        }
+
+        public function updateMachineTranslations(bool $save = true): self {
+            $locales = Locale::allNotDefault();
+            foreach($locales as $locale) {
+                // don't override user translations
+                if($this->isUserTranslation($locale->code)) continue;
+
+                // generate machine translation and store it
+                $value = $this->generateMachineTranslation($locale);
+                $this->set($locale->code, $value, 'machine', false);
+
+                Log::debug("Generated machine translation for key '{$this->key}' in locale '{$locale->code}': " . ($value ? "'$value'" : 'null'));
+            }
+            
+            if($save) $this->save();
+
+            return $this;
+        }
+
+        /**
+         * Generates a machine translation for a given locale.
+         */
+        public function generateMachineTranslation(Locale $locale): bool {
+            sleep(0.2);
+            return fake($locale->code)->sentence();
         }
 
         /**
          * Get or create a translation.
          */
-        public static function get(string $key, ?TranslatableInterface $record = null, ?string $group = null): Translation {
-            $translation = self::getTranslations($record)->where(['key' => $key, 'group' => $group ])->first();
+        public static function get(string $key, ?TranslatableInterface $record = null, string $group = ''): Translation {
+            $translation = self::getTranslations($record)->where([
+                'key' => $key, 
+                'group' => empty($group) ? null : $group
+            ])->first();
 
             if(!$translation) {
                 $translation = new Translation();
