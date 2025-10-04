@@ -10,7 +10,7 @@ use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderBlock;
 use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderShortcode;
 use Feenstra\CMS\Pagebuilder\PagebuilderServiceProvider;
 
-class LaravelCMSServiceProvider extends PackageServiceProvider {
+class CMSServiceProvider extends PackageServiceProvider {
     public function configurePackage(Package $package): void {
         $package
             ->name('laravel-cms')
