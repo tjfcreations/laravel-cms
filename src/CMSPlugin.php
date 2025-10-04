@@ -5,7 +5,7 @@ namespace Feenstra\CMS;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
-class LaravelCMSPlugin implements Plugin {
+class CMSPlugin implements Plugin {
     public function getId(): string {
         return 'tjall/laravel-cms';
     }
