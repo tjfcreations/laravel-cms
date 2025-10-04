@@ -86,8 +86,6 @@ class TranslationResource extends Resource
 
             // ignore if translation was not changed
             if($translation->translate($localeCode) === $value) continue;
-            
-            // update translation value
             $translation->set($localeCode, $value, 'user', false);
         }
 
