@@ -16,12 +16,12 @@ use Feenstra\CMS\Pagebuilder\Filament\Forms\Components\Pageheader;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
+use Feenstra\CMS\Pagebuilder\Enums\PageStatusEnum;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 use Feenstra\CMS\Pagebuilder\Registry;
 
-class PageResource extends Resource
-{
+class PageResource extends Resource {
     protected static ?string $slug = 'fd-cms-pages';
 
     protected static ?string $model = Page::class;
@@ -29,23 +29,38 @@ class PageResource extends Resource
     protected static ?string $navigationGroup = 'Pagina\'s';
     protected static ?string $navigationIcon = 'heroicon-o-document';
 
+    protected static ?int $navigationSort = -100;
+
     protected static ?string $label = 'pagina';
     protected static ?string $pluralLabel = 'pagina\'s';
 
-    public static function form(Form $form): Form
-    {       
+    public static function form(Form $form): Form {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->label('Titel')
+                Forms\Components\TextInput::make('name')
+                    ->helperText('Deze naam wordt getoond in het beheerpaneel.')
+                    ->label('Naam')
                     ->placeholder('Nieuwe pagina')
                     ->required()
+                    ->maxLength(255),
+                Forms\Components\ToggleButtons::make('status')
+                    ->label('Status')
+                    ->grouped()
+                    ->options(PageStatusEnum::class)
+                    ->default(PageStatusEnum::Published)
+                    ->required(),
+                Forms\Components\TextInput::make('title')
+                    ->helperText('Deze titel wordt getoond in het browsertabblad.')
+                    ->label('Titel')
+                    ->placeholder('Nieuwe pagina')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('path')
                     ->helperText('Gebruik {slug} of {id} voor een template.')
                     ->placeholder('/nieuwe-pagina')
-                    ->dehydrateStateUsing(fn ($state) => '/'.trim(trim($state), '/'))
+                    ->dehydrateStateUsing(fn($state) => '/' . trim(trim($state), '/'))
                     ->label('Pad'),
+                Forms\Components\Hidden::make('options')
+                    ->default([]),
                 Tabs::make()
                     ->columnSpanFull()
                     ->tabs([
@@ -102,18 +117,16 @@ class PageResource extends Resource
             ]);
     }
 
-    public static function afterSave(Model $record): void
-    {
+    public static function afterSave(Model $record): void {
         $record->updateRoute(true);
     }
 
     protected static function isPageType(PageTypeEnum $a, mixed $b): bool {
-        if($b instanceof PageTypeEnum) return $a === $b;
+        if ($b instanceof PageTypeEnum) return $a === $b;
         return PageTypeEnum::tryFrom($b) == $a;
     }
 
-    protected static function getModelOptions(): array
-    {
+    protected static function getModelOptions(): array {
         $options = [];
         foreach (Registry::models() as $model) {
             $options[$model::class] = class_basename($model);
@@ -122,12 +135,11 @@ class PageResource extends Resource
         return $options;
     }
 
-    public static function table(Table $table): Table
-    {
+    public static function table(Table $table): Table {
         return $table
             ->columns([
-                Columns\TextColumn::make('title')
-                    ->label('Titel')
+                Columns\TextColumn::make('name')
+                    ->label('Naam')
                     ->description(fn(Page $record): string => $record->type !== PageTypeEnum::Default ? $record->type->getLabel() : '')
                     ->sortable()
                     ->searchable(),
@@ -145,18 +157,16 @@ class PageResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])
-            ->defaultSort('title', 'asc');
+            ->defaultSort('name', 'asc');
     }
 
-    public static function getRelations(): array
-    {
+    public static function getRelations(): array {
         return [
             //
         ];
     }
 
-    public static function getPages(): array
-    {
+    public static function getPages(): array {
         return [
             'index' => Pages\ListPages::route('/'),
             'create' => Pages\CreatePage::route('/create'),

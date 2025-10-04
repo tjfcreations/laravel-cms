@@ -1,43 +1,43 @@
 <?php
-    namespace Feenstra\CMS\Pagebuilder\Models;
 
-    use Feenstra\CMS\I18n\Interfaces\TranslatableInterface;
-    use Feenstra\CMS\I18n\Traits\Translatable;
-    use Illuminate\Database\Eloquent\Model;
-    use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
-    use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
+namespace Feenstra\CMS\Pagebuilder\Models;
 
-    class Page extends Model implements TranslatableInterface
-    {
-        use Translatable;
+use Feenstra\CMS\I18n\Interfaces\TranslatableInterface;
+use Feenstra\CMS\I18n\Traits\Translatable;
+use Illuminate\Database\Eloquent\Model;
+use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
+use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
 
-        protected $translate = ['title'];
+class Page extends Model implements TranslatableInterface {
+    use Translatable;
 
-        protected $table = 'fd_cms_pages';
+    protected $translate = ['title'];
 
-        protected $guarded = [];
+    protected $table = 'fd_cms_pages';
 
-        protected $casts = [
-            'type' => PageTypeEnum::class,
-            'pagebuilder' => 'array',
-            'pageheader' => 'array',
-        ];
+    protected $guarded = [];
 
-        public function render(): string
-        {
-            return (new PageRenderer($this))->render();
-        }
+    protected $casts = [
+        'type' => PageTypeEnum::class,
+        'pagebuilder' => 'array',
+        'pageheader' => 'array',
+        'options' => 'array'
+    ];
 
-        public function getRecord(): ?Model {
-            $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
-            
-            if (isset($this->model) && class_exists($this->model)) {
-                $record = $this->model::where($routeParams)->first();
-                if ($record instanceof Model) {
-                    return $record;
-                }
-            }
-    
-            return null;
-        }
+    public function render(): string {
+        return (new PageRenderer($this))->render();
     }
+
+    public function getRecord(): ?Model {
+        $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
+
+        if (isset($this->model) && class_exists($this->model)) {
+            $record = $this->model::where($routeParams)->first();
+            if ($record instanceof Model) {
+                return $record;
+            }
+        }
+
+        return null;
+    }
+}
