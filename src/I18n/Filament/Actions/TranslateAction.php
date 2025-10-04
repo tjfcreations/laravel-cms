@@ -119,11 +119,7 @@ class TranslateAction extends Action {
         foreach ($updatedTranslations as $translation) {
             $translation->save();
 
-            if (app()->isLocal()) {
-                $translation->updateMachineTranslations();
-            } else {
-                $translation->updateMachineTranslationsAsync();
-            }
+            $translation->updateMachineTranslationsAsync();
         }
     }
 

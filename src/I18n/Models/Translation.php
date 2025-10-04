@@ -237,11 +237,14 @@ class Translation extends Model {
         $targetLocales = $targetLocales->filter(fn($l) => !$l->is($sourceLocale));
         if ($targetLocales->isEmpty()) return [];
 
+        // if source value is empty, return null array to reset all machine translations
         $sourceValue = $this->getValue($sourceLocale->code);
-        if (empty($sourceValue)) return [];
+        if (!Translation::isTranslateWorthy($sourceValue)) {
+            return $targetLocales->keyBy('code')->map(fn() => null)->toArray();
+        }
 
         if (!Registry::hasGoogleCloudCredentials()) {
-            throw new \Exception("Cannot perform machine translations, because Google Cloud credentials are not configured.");
+            throw new \Exception("Cannot perform machine translations, because Google Cloud credentials are missing or incorrect.");
         }
 
         $client = new TranslationServiceClient([
@@ -299,6 +302,21 @@ class Translation extends Model {
         }
 
         return $translation;
+    }
+
+    /**
+     * Determine if the given source value is worthy of translation. Empty strings
+     * and shortcode-only strings are not.
+     */
+    protected static function isTranslateWorthy(?string $sourceValue): bool {
+        if (!is_string($sourceValue)) return false;
+        if (empty(trim($sourceValue))) return false;
+
+        // don't translate strings that are nothing but a shortcode
+        $isOnlyShortcode = preg_match('/^\s*\[.*\]\s*$/', $sourceValue);
+        if ($isOnlyShortcode) return false;
+
+        return true;
     }
 
     protected static function getTranslations(?TranslatableInterface $record = null): MorphMany|Builder {

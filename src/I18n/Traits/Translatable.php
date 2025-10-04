@@ -23,7 +23,7 @@ trait Translatable {
             // update translations for default locale to match record values
             foreach ($record->getTranslatableAttributes() as $attribute) {
                 $translation = Translation::get($attribute, $record);
-                $value = $record->{$attribute};
+                $value = @$record->{$attribute};
 
                 if (is_string($value) && $value !== $translation->getValue($defaultLocale->code)) {
                     $translation->set($defaultLocale->code, $value, 'user');
@@ -32,7 +32,7 @@ trait Translatable {
 
             // update machine translations
             foreach ($record->translations as $translation) {
-                $translation->updateMachineTranslations();
+                $translation->updateMachineTranslationsAsync();
             }
         });
     }

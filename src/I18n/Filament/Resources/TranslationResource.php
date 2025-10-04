@@ -89,11 +89,7 @@ class TranslationResource extends Resource {
 
         $translation->save();
 
-        if (app()->isLocal()) {
-            $translation->updateMachineTranslations();
-        } else {
-            $translation->updateMachineTranslationsAsync();
-        }
+        $translation->updateMachineTranslationsAsync();
 
         return $translation;
     }

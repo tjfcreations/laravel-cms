@@ -34,7 +34,7 @@ class TranslationsForm {
                 $input
                     ->hintIcon('heroicon-s-bolt', tooltip: 'Automatisch vertaald op ' . $formattedDate)
                     ->hintColor(Color::Purple);
-            } else {
+            } elseif ($translation->isUserTranslation($locale->code)) {
                 $input
                     ->hintIcon('heroicon-s-clock', tooltip: 'Handmatig aangepast op ' . $formattedDate);
             }
