@@ -81,19 +81,27 @@ class Translation extends Model {
     /**
      * Update the translation for a given locale.
      */
-    public function set(string $localeCode, mixed $value = null, string|Authenticatable|null $source = null, bool $save = true): self {
-        $value = is_string($value) ? $value : null;
+    public function set(string $localeCode, mixed $value = null, string|Authenticatable|null $source = null): bool {
+        if ($this->getValue($localeCode) === $value) return false;
 
+        $isValidValue = is_string($value);
+
+        // update the translation value
         $translations = (array) $this->translations;
-        Arr::set($translations, "$localeCode.value", $value);
+        if ($isValidValue) {
+            Arr::set($translations, "$localeCode.value", $value);
+        } else {
+            Arr::forget($translations, $localeCode);
+        }
         $this->translations = $translations;
 
-        $this->setSource($localeCode, $source, false);
-        $this->setMetaProperty($localeCode, 'updated_at', Carbon::now()->toIso8601String());
+        // update meta and source (after re-assigning translations property)
+        if ($isValidValue) {
+            $this->setSource($localeCode, $source);
+            $this->setMetaProperty($localeCode, 'updated_at', Carbon::now()->toIso8601String());
+        }
 
-        if ($save) $this->save();
-
-        return $this;
+        return true;
     }
 
     public function getUser(string $localeCode): ?Authenticatable {
@@ -104,21 +112,13 @@ class Translation extends Model {
         return $model::findOrFail($updatedByUserId);
     }
 
-    public function setSource(string $localeCode, string|Authenticatable|null $source = null, bool $save = true): self {
+    public function setSource(string $localeCode, string|Authenticatable|null $source = null): self {
         if ($source instanceof Authenticatable) {
             $this->setMetaProperty($localeCode, 'updated_by_user_id', $source->getAuthIdentifier(), false);
-            $this->setMetaProperty($localeCode, 'source', 'user', $save);
+            $this->setMetaProperty($localeCode, 'source', 'user');
         } elseif (is_string($source)) {
-            $this->setMetaProperty($localeCode, 'source', $source, $save);
+            $this->setMetaProperty($localeCode, 'source', $source);
         }
-
-        return $this;
-    }
-
-    public function clear(bool $save = true): self {
-        $this->translations = [];
-
-        if ($save) $this->save();
 
         return $this;
     }
@@ -126,23 +126,22 @@ class Translation extends Model {
     /**
      * Remove the translation for a given locale.
      */
-    public function remove(string $localeCode, bool $save = true): self {
-        return $this->set($localeCode, null, null, $save);
+    public function remove(string $localeCode): self {
+        $this->set($localeCode, null, null);
+        return $this;
     }
 
     public function getMeta(string $localeCode): array {
         return (array) Arr::get($this->translations, "$localeCode.meta");
     }
 
-    public function setMeta(string $localeCode, array $meta, bool $save = true): self {
+    public function setMeta(string $localeCode, array $meta): self {
         if (empty($meta)) return $this;
 
         $mergedMeta = array_replace($this->getMeta($localeCode), $meta);
         $translations = (array) $this->translations;
         Arr::set($translations, "$localeCode.meta", $mergedMeta);
         $this->translations = $translations;
-
-        if ($save) $this->save();
 
         return $this;
     }
@@ -151,8 +150,8 @@ class Translation extends Model {
         return Arr::get($this->getMeta($localeCode), $key);
     }
 
-    public function setMetaProperty(string $localeCode, string $key, mixed $value, bool $save = true): self {
-        return $this->setMeta($localeCode, [$key => $value], $save);
+    public function setMetaProperty(string $localeCode, string $key, mixed $value): self {
+        return $this->setMeta($localeCode, [$key => $value]);
     }
 
     public function isMachineTranslation(string $localeCode): bool {
@@ -194,7 +193,7 @@ class Translation extends Model {
 
     public function updateMachineTranslationsAsync(): self {
         dispatch(function () {
-            $this->updateMachineTranslations()->save();
+            $this->updateMachineTranslations();
         })->afterResponse();
 
         return $this;
@@ -224,7 +223,7 @@ class Translation extends Model {
             // on the API, so check again to prevent overwriting user translations
             if ($this->isUserTranslation($localeCode)) continue;
 
-            $this->set($localeCode, $value, 'machine', false);
+            $this->set($localeCode, $value, 'machine');
         }
 
         $this->save();

@@ -25,8 +25,8 @@ trait Translatable {
                 $translation = Translation::get($attribute, $record);
                 $value = @$record->{$attribute};
 
-                if (is_string($value) && $value !== $translation->getValue($defaultLocale->code)) {
-                    $translation->set($defaultLocale->code, $value, 'user');
+                if ($translation->set($defaultLocale->code, $value, 'user')) {
+                    $translation->save();
                 }
             }
 

@@ -11,6 +11,7 @@ use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Models\Translation;
 use Feenstra\CMS\I18n\Registry;
 use Filament\Forms;
+use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\EditRecord;
@@ -81,6 +82,8 @@ class TranslateAction extends Action {
 
         foreach ($record->translations as $translation) {
             foreach ($translation->values() as $localeCode => $value) {
+                if (!is_string($value) || empty($value)) continue;
+
                 $group = $translation->group ?? 'ungrouped';
 
                 // translation key might contains periods, which does not work with Arr::set()
@@ -106,23 +109,31 @@ class TranslateAction extends Action {
     protected function handleSave(TranslatableInterface $record, array $data) {
         $updatedTranslations = [];
 
+        // ensure existing translations are deleted when keys are removed
+        foreach ($record->translations as $translation) {
+            $group = $translation->group ?? 'ungrouped';
+            $key = $translation->key;
+
+            foreach (Locale::all() as $locale) {
+                // explicitly set null values for missing keys
+                $data[$group][$locale->code][$key] ??= null;
+            }
+        }
+
         foreach ($data as $group => $data) {
-            foreach ($data as $localeCode => $translations) {
-                foreach ($translations as $key => $value) {
+            foreach ($data as $localeCode => $values) {
+                foreach ($values as $key => $value) {
                     $translation = Translation::get($key, $record, $group);
 
-                    // ignore if translation was not changed
-                    if ($translation->getValue($localeCode) === $value) continue;
-
-                    $translation->set($localeCode, $value, Auth::user(), false);
-                    $updatedTranslations[] = $translation;
+                    if ($translation->set($localeCode, $value, Auth::user())) {
+                        $translation->save();
+                        $updatedTranslations[$translation->id] = $translation;
+                    }
                 }
             }
         }
 
         foreach ($updatedTranslations as $translation) {
-            $translation->save();
-
             $translation->updateMachineTranslationsAsync();
         }
     }
@@ -130,8 +141,11 @@ class TranslateAction extends Action {
     protected function makeCustomKeyValueEditor(Locale $locale): Forms\Components\KeyValue {
         return Forms\Components\KeyValue::make("custom.{$locale->code}")
             ->label("Lokale vertalingen ({$locale->name})")
-            ->keyLabel('Vertaalsleutel')
+            ->keyLabel('Sleutel')
+            ->keyPlaceholder('bijv. zoeken, kopen')
             ->valueLabel('Vertaling')
+            ->valuePlaceholder('bijv. suchen, search, kaufen, buy')
+            ->addActionLabel('Vertaling toevoegen')
             ->hintColor(Color::Emerald)
             ->hintIcon(
                 'heroicon-m-question-mark-circle',

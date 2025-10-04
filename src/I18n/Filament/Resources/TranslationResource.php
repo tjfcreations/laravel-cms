@@ -80,11 +80,9 @@ class TranslationResource extends Resource {
         $translation = $translation ?? Translation::get($data['key']);
 
         foreach ($data['translations'] as $localeCode => $data) {
-            $value = $data['value'];
-
-            // ignore if translation was not changed
-            if ($translation->getValue($localeCode) === $value) continue;
-            $translation->set($localeCode, $value, Auth::user(), false);
+            if ($translation->set($localeCode, $data['value'], Auth::user())) {
+                $translation->save();
+            }
         }
 
         $translation->save();
