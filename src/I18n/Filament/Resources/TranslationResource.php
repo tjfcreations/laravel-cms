@@ -15,6 +15,7 @@ use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Registry;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Tabs;
+use Illuminate\Support\Facades\Auth;
 
 class TranslationResource extends Resource {
     protected static ?string $slug = 'fd-cms-translations';
@@ -83,19 +84,19 @@ class TranslationResource extends Resource {
 
             // ignore if translation was not changed
             if ($translation->getValue($localeCode) === $value) continue;
-            $translation->set($localeCode, $value, 'user', false);
+            $translation->set($localeCode, $value, Auth::user(), false);
         }
 
         $translation->save();
 
-        $translation->updateMachineTranslations();
+        $translation->updateMachineTranslationsAsync();
 
         return $translation;
     }
 
     public static function makeTab(Locale $locale) {
         return Forms\Components\Tabs\Tab::make($locale->name)
-            ->schema(function (Translation $record) use ($locale) {
+            ->schema(function (?Translation $record) use ($locale) {
                 return [
                     TranslationsForm::makeValueInput($locale, "translations.{$locale->code}.value", false, $record)
                         ->label("Vertaling ({$locale->name})")

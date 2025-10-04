@@ -5,7 +5,8 @@ return [
     'google_application_credentials' => env('FD_CMS_GOOGLE_APPLICATION_CREDENTIALS'),
 
     'i18n' => [
-        'enabled' => true
+        'enabled' => true,
+        'user_model' => 'App\Models\User'
     ],
 
     'media' => [

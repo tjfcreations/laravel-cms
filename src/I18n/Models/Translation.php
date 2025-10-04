@@ -12,10 +12,13 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Feenstra\CMS\I18n\Support\PatternEscaper;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Google\Cloud\Translate\V3\Client\TranslationServiceClient;
 use Google\Cloud\Translate\V3\TranslateTextRequest;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
 
 class Translation extends Model {
     protected $table = 'fd_cms_translations';
@@ -77,20 +80,36 @@ class Translation extends Model {
     /**
      * Update the translation for a given locale.
      */
-    public function set(string $localeCode, mixed $value = null, ?string $source = null, bool $save = true): self {
+    public function set(string $localeCode, mixed $value = null, string|Authenticatable|null $source = null, bool $save = true): self {
         $value = is_string($value) ? $value : null;
 
         $translations = (array) $this->translations;
         Arr::set($translations, "$localeCode.value", $value);
         $this->translations = $translations;
 
-        if (is_string($source)) {
-            $this->setMetaProperty($localeCode, 'source', $source, false);
-        }
-
+        $this->setSource($localeCode, $source, false);
         $this->setMetaProperty($localeCode, 'updated_at', Carbon::now()->toIso8601String());
 
         if ($save) $this->save();
+
+        return $this;
+    }
+
+    public function getUser(string $localeCode): ?Authenticatable {
+        $updatedByUserId = $this->getMetaProperty($localeCode, 'updated_by_user_id');
+        if (!isset($updatedByUserId)) return null;
+
+        $model = config('fd-cms.i18n.user_model', 'App\Models\User');
+        return $model::findOrFail($updatedByUserId);
+    }
+
+    public function setSource(string $localeCode, string|Authenticatable|null $source = null, bool $save = true): self {
+        if ($source instanceof Authenticatable) {
+            $this->setMetaProperty($localeCode, 'updated_by_user_id', $source->getAuthIdentifier(), false);
+            $this->setMetaProperty($localeCode, 'source', 'user', $save);
+        } elseif (is_string($source)) {
+            $this->setMetaProperty($localeCode, 'source', $source, $save);
+        }
 
         return $this;
     }
@@ -173,8 +192,17 @@ class Translation extends Model {
     }
 
     public function updateMachineTranslationsAsync(): self {
-        dispatch(fn() => $this->updateMachineTranslations()->save())
-            ->afterResponse();
+        $user = Auth::user();
+
+        dispatch(function () use ($user) {
+            $this->updateMachineTranslations()->save();
+
+            // notify the user that the translations have been updated
+            Notification::make()
+                ->title('Automatische vertalingen voor \'' . $this->key . '\' zijn bijgewerkt.')
+                ->success()
+                ->sendToDatabase($user);
+        })->afterResponse();
 
         return $this;
     }

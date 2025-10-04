@@ -19,6 +19,7 @@ use Illuminate\Support\Arr;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class TranslateAction extends Action {
     protected array $labels = [];
@@ -42,10 +43,7 @@ class TranslateAction extends Action {
             ->action(function (TranslatableInterface $record, array $data) {
                 $this->handleSave($record, $data);
             })
-            ->hidden(function () {
-                if (Registry::isDisabled()) return true;
-                return Locale::all()->isEmpty();
-            });
+            ->hidden(Registry::isDisabled());
     }
 
     public static function getDefaultName(): ?string {
@@ -112,7 +110,7 @@ class TranslateAction extends Action {
                     // ignore if translation was not changed
                     if ($translation->getValue($localeCode) === $value) continue;
 
-                    $translation->set($localeCode, $value, 'user', false);
+                    $translation->set($localeCode, $value, Auth::user(), false);
                     $updatedTranslations[] = $translation;
                 }
             }
@@ -121,7 +119,7 @@ class TranslateAction extends Action {
         foreach ($updatedTranslations as $translation) {
             $translation->save();
 
-            $translation->updateMachineTranslations();
+            $translation->updateMachineTranslationsAsync();
         }
     }
 
