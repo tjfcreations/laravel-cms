@@ -10,12 +10,14 @@ return new class extends Migration
     {
         Schema::create('fd_cms_locales', function (Blueprint $table) {
             $table->id();
+
             $table->string('code');
             $table->string('name');
             $table->string('localized_name');
             $table->string('flag_path')->nullable();
             $table->boolean('is_default')->default(false);
             $table->boolean('is_machine_translatable')->default(false);
+            
             $table->timestamps();
         });
     }
