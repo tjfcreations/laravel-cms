@@ -4,6 +4,7 @@ namespace Feenstra\CMS\I18n\Filament\Resources;
 
 use Feenstra\CMS\I18n\Filament\Resources\LocaleResource\Pages;
 use Feenstra\CMS\I18n\Models\Locale;
+use Feenstra\CMS\I18n\Registry;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -107,6 +108,6 @@ class LocaleResource extends Resource {
     }
 
     public static function shouldRegisterNavigation(): bool {
-        return config('fd-cms.i18n.enabled', true);
+        return Registry::isEnabled();
     }
 }

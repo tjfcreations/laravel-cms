@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Feenstra\CMS\I18n\Models\Locale;
+use Feenstra\CMS\I18n\Registry;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Tabs;
 
@@ -103,6 +104,6 @@ class TranslationResource extends Resource {
     }
 
     public static function shouldRegisterNavigation(): bool {
-        return config('fd-cms.i18n.enabled', true);
+        return Registry::isEnabled();
     }
 }

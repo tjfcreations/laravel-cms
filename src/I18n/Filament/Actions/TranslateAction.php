@@ -9,6 +9,7 @@ use Filament\Support\Colors\Color;
 use Filament\Forms\Components\Tabs;
 use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Models\Translation;
+use Feenstra\CMS\I18n\Registry;
 use Filament\Forms;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Form;
@@ -42,7 +43,7 @@ class TranslateAction extends Action {
                 $this->handleSave($record, $data);
             })
             ->hidden(function () {
-                if (!config('fd-cms.i18n.enabled', true)) return true;
+                if (Registry::isDisabled()) return true;
                 return Locale::all()->isEmpty();
             });
     }
