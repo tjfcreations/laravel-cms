@@ -13,7 +13,7 @@ use Feenstra\CMS\Pagebuilder\PagebuilderServiceProvider;
 class CMSServiceProvider extends PackageServiceProvider {
     public function configurePackage(Package $package): void {
         $package
-            ->name('laravel-cms')
+            ->name('fd-cms')
             ->discoversMigrations()
             ->hasRoute('web')
             ->hasViews('fd-cms')

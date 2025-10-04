@@ -15,8 +15,7 @@ use Feenstra\CMS\I18n\Models\Locale;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\Tabs;
 
-class TranslationResource extends Resource
-{
+class TranslationResource extends Resource {
     protected static ?string $slug = 'fd-cms-translations';
 
     protected static ?string $model = Translation::class;
@@ -27,8 +26,7 @@ class TranslationResource extends Resource
     protected static ?string $label = 'vertaling';
     protected static ?string $pluralLabel = 'vertalingen';
 
-    public static function form(Form $form): Form
-    {
+    public static function form(Form $form): Form {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('key')
@@ -36,17 +34,17 @@ class TranslationResource extends Resource
                     ->placeholder('title')
                     ->columnSpanFull()
                     ->required(),
-                TranslationsForm::getTabs()
+                TranslationsForm::makeTabs([self::class, 'makeTab'], Locale::allWithDefaultFirst())
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
+    public static function table(Table $table): Table {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->whereNull('record_id'))
+            // only show global translations in the list
+            ->modifyQueryUsing(fn($query) => $query->whereNull('record_id'))
             ->columns([
                 TextColumn::make('key')
-                    ->label('Sleutel/attribuut')
+                    ->label('Sleutel')
             ])
             ->filters([
                 //
@@ -59,15 +57,13 @@ class TranslationResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
+    public static function getRelations(): array {
         return [
             //
         ];
     }
 
-    public static function getPages(): array
-    {
+    public static function getPages(): array {
         return [
             'index' => Pages\ListTranslations::route('/'),
             'create' => Pages\CreateTranslation::route('/create'),
@@ -81,22 +77,32 @@ class TranslationResource extends Resource
     public static function handleSave(array $data, ?Translation $translation = null) {
         $translation = $translation ?? Translation::get($data['key']);
 
-        foreach($data['translations'] as $localeCode => $data) {
+        foreach ($data['translations'] as $localeCode => $data) {
             $value = $data['value'];
 
             // ignore if translation was not changed
-            if($translation->translate($localeCode) === $value) continue;
+            if ($translation->getValue($localeCode) === $value) continue;
             $translation->set($localeCode, $value, 'user', false);
         }
 
         $translation->save();
-        
-        if($translation->hasOutdatedMachineTranslations()) {
-            $translation->updateAllMachineTranslationsAsync();
-        } else {
-            $translation->updateMissingMachineTranslationsAsync();
-        }
+
+        $translation->updateMachineTranslations();
 
         return $translation;
+    }
+
+    public static function makeTab(Locale $locale) {
+        return Forms\Components\Tabs\Tab::make($locale->name)
+            ->schema(function (Translation $record) use ($locale) {
+                return [
+                    TranslationsForm::makeValueInput($locale, "translations.{$locale->code}.value", false, $record)
+                        ->label("Vertaling ({$locale->name})")
+                ];
+            });
+    }
+
+    public static function shouldRegisterNavigation(): bool {
+        return config('fd-cms.i18n.enabled', true);
     }
 }

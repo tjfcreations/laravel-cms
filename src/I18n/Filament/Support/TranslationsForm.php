@@ -1,4 +1,5 @@
 <?php
+
 namespace Feenstra\CMS\I18n\Filament\Support;
 
 use Filament\Support\Colors\Color;
@@ -7,10 +8,11 @@ use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Models\Translation;
 use Filament\Forms;
 use Filament\Forms\Set;
+use Illuminate\Support\Collection;
 
-class TranslationsForm {   
+class TranslationsForm {
     public static function makeValueInput(Locale $locale, string $name, bool $isRich = false, ?Translation $translation = null) {
-        if($isRich) {
+        if ($isRich) {
             $input = Forms\Components\RichEditor::make($name);
         } else {
             $input = Forms\Components\TextInput::make($name)
@@ -18,51 +20,35 @@ class TranslationsForm {
                     Forms\Components\Actions\Action::make('reset')
                         ->icon('heroicon-m-trash')
                         ->color(Color::Red)
-                        ->action(function (Set $set, $state) use($name) {
+                        ->action(function (Set $set, $state) use ($name) {
                             $set($name, null);
                         })
                 );
         }
 
         // show whether the value is machine generated
-        if($translation && $translation->isMachineTranslation($locale->code)) {
-            $input
-                ->hint('Automatisch gegenereerd')
-                ->hintIcon('heroicon-s-bug-ant', tooltip: 'Deze vertaling is automatisch gegenereerd.')
-                ->hintColor(Color::Blue);
+        if ($translation) {
+            $formattedDate = $translation->updatedAt($locale->code)->format('d-m-Y \o\m H:i.');
+
+            if ($translation->isMachineTranslation($locale->code)) {
+                $input
+                    ->hintIcon('heroicon-s-bolt', tooltip: 'Automatisch vertaald op ' . $formattedDate)
+                    ->hintColor(Color::Purple);
+            } else {
+                $input
+                    ->hintIcon('heroicon-s-clock', tooltip: 'Handmatig aangepast op ' . $formattedDate);
+            }
         }
 
         return $input;
     }
 
-    public static function makeCustomKeyValueEditor(Locale $locale): Forms\Components\KeyValue {
-        return Forms\Components\KeyValue::make("_custom.{$locale->code}")
-            ->label("Lokale vertalingen ({$locale->name})")
-            ->keyLabel('Vertaalsleutel')
-            ->valueLabel('Vertaling')
-            ->hintColor('primary')
-            ->hintIcon(
-                'heroicon-m-question-mark-circle', 
-                tooltip: str('Met lokale vertalingen kun je makkelijk je pagina-inhoud vertalen. Gebruik [translate vertaalsleutel] in je pagina-inhoud om een lokale vertaling te tonen.'));
-    }
-
-    public static function getTabs() {
+    public static function makeTabs(callable $makeTab, Collection $locales) {
         return Forms\Components\Tabs::make()
-            ->tabs(function() {
-                return Locale::all()->map(function($locale) {
-                    return self::getTab($locale);
-                })->toArray();
+            ->tabs($locales->map(function ($locale) use ($makeTab) {
+                return $makeTab($locale);
             })
+                ->toArray())
             ->columnSpanFull();
-    }
-
-    public static function getTab(Locale $locale) {
-        return Forms\Components\Tabs\Tab::make($locale->name)
-            ->schema(function(?Translation $record) use($locale) {
-                return [
-                    self::makeValueInput($locale, "translations.{$locale->code}.value", false, $record)
-                        ->label("Vertaling ({$locale->name})")
-                ];
-            });
     }
 }

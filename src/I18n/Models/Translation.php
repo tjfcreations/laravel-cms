@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Feenstra\CMS\I18n\Support\PatternEscaper;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -61,33 +62,33 @@ class Translation extends Model {
     /**
      * Get the translation value for a given locale.
      */
-    protected function getValue(string $localeCode): ?string {
+    public function getValue(string $localeCode): ?string {
         return Arr::get($this->translations, "{$localeCode}.value");
     }
 
     /**
      * Check if a translation exists for the given locale (current locale by default).
      */
-    public function has(?string $locale = null): bool {
-        $locale = $locale ?? app()->currentLocale();
-        return !empty(Arr::get($this->translations, "$locale.value"));
+    public function has(?string $localeCode = null): bool {
+        $localeCode = $localeCode ?? app()->currentLocale();
+        return !empty(Arr::get($this->translations, "$localeCode.value"));
     }
 
     /**
      * Update the translation for a given locale.
      */
-    public function set(string $locale, mixed $value = null, ?string $source = null, bool $save = true): self {
+    public function set(string $localeCode, mixed $value = null, ?string $source = null, bool $save = true): self {
         $value = is_string($value) ? $value : null;
 
         $translations = (array) $this->translations;
-        Arr::set($translations, "$locale.value", $value);
+        Arr::set($translations, "$localeCode.value", $value);
         $this->translations = $translations;
 
         if (is_string($source)) {
-            $this->setMetaProperty($locale, 'source', $source, false);
+            $this->setMetaProperty($localeCode, 'source', $source, false);
         }
 
-        $this->setMetaProperty($locale, 'updated_at', Carbon::now()->toIso8601String());
+        $this->setMetaProperty($localeCode, 'updated_at', Carbon::now()->toIso8601String());
 
         if ($save) $this->save();
 
@@ -105,20 +106,20 @@ class Translation extends Model {
     /**
      * Remove the translation for a given locale.
      */
-    public function remove(string $locale, bool $save = true): self {
-        return $this->set($locale, null, null, $save);
+    public function remove(string $localeCode, bool $save = true): self {
+        return $this->set($localeCode, null, null, $save);
     }
 
-    public function getMeta(string $locale): array {
-        return (array) Arr::get($this->translations, "$locale.meta");
+    public function getMeta(string $localeCode): array {
+        return (array) Arr::get($this->translations, "$localeCode.meta");
     }
 
-    public function setMeta(string $locale, array $meta, bool $save = true): self {
+    public function setMeta(string $localeCode, array $meta, bool $save = true): self {
         if (empty($meta)) return $this;
 
-        $mergedMeta = array_replace($this->getMeta($locale), $meta);
+        $mergedMeta = array_replace($this->getMeta($localeCode), $meta);
         $translations = (array) $this->translations;
-        Arr::set($translations, "$locale.meta", $mergedMeta);
+        Arr::set($translations, "$localeCode.meta", $mergedMeta);
         $this->translations = $translations;
 
         if ($save) $this->save();
@@ -126,46 +127,77 @@ class Translation extends Model {
         return $this;
     }
 
-    public function getMetaProperty(string $locale, string $key): mixed {
-        return Arr::get($this->getMeta($locale), $key);
+    public function getMetaProperty(string $localeCode, string $key): mixed {
+        return Arr::get($this->getMeta($localeCode), $key);
     }
 
-    public function setMetaProperty(string $locale, string $key, mixed $value, bool $save = true): self {
-        return $this->setMeta($locale, [$key => $value], $save);
+    public function setMetaProperty(string $localeCode, string $key, mixed $value, bool $save = true): self {
+        return $this->setMeta($localeCode, [$key => $value], $save);
     }
 
-    public function isMachineTranslation(string $locale): bool {
-        return $this->has($locale) && $this->getMetaProperty($locale, 'source') === 'machine';
+    public function isMachineTranslation(string $localeCode): bool {
+        return $this->has($localeCode) && $this->getMetaProperty($localeCode, 'source') === 'machine';
     }
 
-    public function isUserTranslation(string $locale): bool {
-        return $this->has($locale) && $this->getMetaProperty($locale, 'source') === 'user';
-    }
-
-    /**
-     * Check if any machine translations are outdated compared to the default locale.
-     */
-    public function hasOutdatedMachineTranslations() {
-        $defaultLocale = Locale::getDefault();
-        $defaultUpdatedAt = $this->getMetaProperty($defaultLocale->code, 'updated_at');
-        if (!$defaultUpdatedAt) return false;
-
-        $outdatedLocales = Locale::allMachineTranslatable()
-            ->filter(fn($l) => $this->isMachineTranslation($l->code))
-            ->filter(fn($l) => $this->getMetaProperty($l->code, 'updated_at') < $defaultUpdatedAt);
-
-        return $outdatedLocales->isNotEmpty();
+    public function isUserTranslation(string $localeCode): bool {
+        return $this->has($localeCode) && $this->getMetaProperty($localeCode, 'source') !== 'machine';
     }
 
     /**
-     * Regenerate missing (empty) machine translations.
+     * Check if the translation for the given locale is outdated,
+     * compared to the default locale.
      */
-    public function updateMissingMachineTranslations(): self {
+    public function isOutdated(string $localeCode) {
+        $localeUpdatedAt = $this->getMetaProperty($localeCode, 'updated_at');
+        if (empty($localeUpdatedAt)) return false;
+
+        $defaultLocaleUpdatedAt = $this->getMetaProperty(Locale::getDefault()->code, 'updated_at');
+        if (empty($defaultLocaleUpdatedAt)) return false;
+
+        return Carbon::parse($localeUpdatedAt)->lessThan(Carbon::parse($defaultLocaleUpdatedAt));
+    }
+
+    /**
+     * Check if there is no translation for the given locale.
+     */
+    public function isMissing(string $localeCode) {
+        return !$this->has($localeCode);
+    }
+
+    /**
+     * Get the last updated time for the given locale.
+     */
+    public function updatedAt(string $localeCode): CarbonInterface {
+        $updatedAt = $this->getMetaProperty($localeCode, 'updated_at');
+        return $updatedAt ? Carbon::parse($updatedAt) : now();
+    }
+
+    public function updateMachineTranslationsAsync(): self {
+        dispatch(fn() => $this->updateMachineTranslations()->save())
+            ->afterResponse();
+
+        return $this;
+    }
+
+    /**
+     * Regenerate missing or outdated machine translations, except user-edited ones.
+     */
+    public function updateMachineTranslations(): self {
         $targetLocales = Locale::allMachineTranslatable()
-            ->filter(fn($l) => !$this->has($l->code));
-        
-        $translations = $this->generateMachineTranslations($targetLocales);
-        foreach($translations as $localeCode => $value) {
+            ->filter(function ($locale) {
+                // don't overwrite user translations
+                if ($this->isUserTranslation($locale->code)) return false;
+
+                // only update missing or outdated translations
+                return $this->isMissing($locale->code) || $this->isOutdated($locale->code);
+            });
+
+        $translations = $this->requestMachineTranslations($targetLocales);
+        foreach ($translations as $localeCode => $value) {
+            // the user may have updated the translations while waiting
+            // on the API, so check again to prevent overwriting user translations
+            if ($this->isUserTranslation($localeCode)) continue;
+
             $this->set($localeCode, $value, 'machine', false);
         }
 
@@ -175,31 +207,14 @@ class Translation extends Model {
     }
 
     /**
-     * Regenerate all machine translations (except user-edited ones).
+     * Request machine translations from the Google Cloud Translation API.
      */
-    public function updateAllMachineTranslations(): self {
-        $targetLocales = Locale::allMachineTranslatable()
-            ->filter(fn($l) => !$this->isUserTranslation($l->code));
-
-        $translations = $this->generateMachineTranslations($targetLocales);
-        foreach($translations as $localeCode => $value) {
-            $this->set($localeCode, $value, 'machine', false);
-        }
-
-        $this->save();
-
-        return $this;
-    }
-    
-    /**
-     * Generates machine translations using the Google Cloud Translation API.
-     */
-    protected function generateMachineTranslations(Collection $targetLocales): array {
+    protected function requestMachineTranslations(Collection $targetLocales): array {
         $sourceLocale = Locale::getDefault();
 
         // ensure source locale is not in target locales
         $targetLocales = $targetLocales->filter(fn($l) => !$l->is($sourceLocale));
-        if(empty($targetLocales)) return [];
+        if ($targetLocales->isEmpty()) return [];
 
         $sourceValue = $this->getValue($sourceLocale->code);
         if (empty($sourceValue)) return [];
@@ -209,7 +224,7 @@ class Translation extends Model {
         ]);
         $formattedParent = $client->locationName(config('fd-cms.google_cloud_project'), 'global');
 
-        Log::debug("Generating machine translations in " . $targetLocales->pluck('code')->implode(', ') . " for [Translation {$this->id}] ({$sourceValue})");
+        Log::debug("Generating translations for '{$this->key}' [Translation {$this->id}] ('" . Str::limit($sourceValue, 50) . "') in [" . $targetLocales->pluck('code')->implode(', ') . "].");
 
         // replace shortcodes with placeholders to prevent them from being translated
         $escaper = new PatternEscaper($sourceValue);
@@ -225,11 +240,11 @@ class Translation extends Model {
 
             $response = $client->translateText($request);
             $escapedTargetValue = @$response->getTranslations()[0]->getTranslatedText();
-            
-            if(is_string($escapedTargetValue)) {
+
+            if (is_string($escapedTargetValue)) {
                 // replace placeholders with shortcodes again
                 $targetValue = $escaper->unescape($escapedTargetValue);
-                $translations[$targetLocale->code] = $targetValue;
+                $translations[$targetLocale->code] = html_entity_decode($targetValue);
             }
         }
 
@@ -239,11 +254,14 @@ class Translation extends Model {
     /**
      * Get or create a translation.
      */
-    public static function get(string $key, ?TranslatableInterface $record = null, string $group = ''): Translation {
-        $translation = self::getTranslations($record)->where([
-            'key' => $key,
-            'group' => empty($group) ? null : $group
-        ])->first();
+    public static function get(string $key, ?TranslatableInterface $record = null, ?string $group = null): Translation {
+        if (empty($group) || $group === 'ungrouped') {
+            $group = null;
+        }
+
+        $translation = self::getTranslations($record)
+            ->where(['key' => $key, 'group' => $group])
+            ->first();
 
         // dd($key, $translation);
 
@@ -260,19 +278,5 @@ class Translation extends Model {
 
     protected static function getTranslations(?TranslatableInterface $record = null): MorphMany|Builder {
         return isset($record) ? $record->translations() : Translation::query();
-    }
-
-    public function updateAllMachineTranslationsAsync(): self {
-        dispatch(fn() => $this->updateAllMachineTranslations()->save())
-            ->afterResponse();
-
-        return $this;
-    }
-    
-    public function updateMissingMachineTranslationsAsync(): self {
-        dispatch(fn() => $this->updateMissingMachineTranslations()->save())
-            ->afterResponse();
-
-        return $this;
     }
 }

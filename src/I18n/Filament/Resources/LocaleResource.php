@@ -12,8 +12,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class LocaleResource extends Resource
-{
+class LocaleResource extends Resource {
     protected static ?string $slug = 'fd-cms-locales';
 
     protected static ?string $model = Locale::class;
@@ -24,8 +23,7 @@ class LocaleResource extends Resource
     protected static ?string $label = 'taal';
     protected static ?string $pluralLabel = 'talen';
 
-    public static function form(Form $form): Form
-    {
+    public static function form(Form $form): Form {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
@@ -67,8 +65,7 @@ class LocaleResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
+    public static function table(Table $table): Table {
         return $table
             ->columns([
                 TextColumn::make('name')
@@ -95,19 +92,21 @@ class LocaleResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
+    public static function getRelations(): array {
         return [
             //
         ];
     }
 
-    public static function getPages(): array
-    {
+    public static function getPages(): array {
         return [
             'index' => Pages\ListLocales::route('/'),
             'create' => Pages\CreateLocale::route('/create'),
             'edit' => Pages\EditLocale::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool {
+        return config('fd-cms.i18n.enabled', true);
     }
 }
