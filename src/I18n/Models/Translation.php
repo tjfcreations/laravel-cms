@@ -209,6 +209,11 @@ class Translation extends Model {
                 // don't overwrite user translations
                 if ($this->isUserTranslation($locale->code)) return false;
 
+                // check if machine translations are enabled for this key
+                if ($this->record && !$this->record->shouldGenerateMachineTranslation($this->key)) {
+                    return false;
+                }
+
                 // only update missing or outdated translations
                 return $this->isMissing($locale->code) || $this->isOutdated($locale->code);
             });

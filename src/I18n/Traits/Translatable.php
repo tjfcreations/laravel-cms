@@ -57,6 +57,16 @@ trait Translatable {
         return $this->morphMany(Translation::class, 'record');
     }
 
+    /**
+     * Determine if machine translations should be generated for the given attribute.
+     */
+    public function shouldGenerateMachineTranslation(string $attribute): bool {
+        return true;
+    }
+
+    /**
+     * Get the translatable attributes for the model.
+     */
     public function getTranslatableAttributes(): array {
         return is_array(@$this->translate) ? $this->translate : [];
     }
