@@ -82,7 +82,10 @@ class TranslateAction extends Action {
         foreach ($record->translations as $translation) {
             foreach ($translation->values() as $localeCode => $value) {
                 $group = $translation->group ?? 'ungrouped';
-                Arr::set($data, "{$group}.{$localeCode}.{$translation->key}", $value);
+                Arr::set($data, "{$group}.{$localeCode}", []);
+
+                // translation key might contains periods, which does not work with Arr::set()
+                $data[$group][$localeCode][$translation->key] = $value;
             }
         }
 
