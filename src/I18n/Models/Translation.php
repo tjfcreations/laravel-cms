@@ -19,6 +19,7 @@ use Google\Cloud\Translate\V3\Client\TranslationServiceClient;
 use Google\Cloud\Translate\V3\TranslateTextRequest;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Feenstra\CMS\I18n\Registry;
 
 class Translation extends Model {
     protected $table = 'fd_cms_translations';
@@ -192,16 +193,8 @@ class Translation extends Model {
     }
 
     public function updateMachineTranslationsAsync(): self {
-        $user = Auth::user();
-
-        dispatch(function () use ($user) {
+        dispatch(function () {
             $this->updateMachineTranslations()->save();
-
-            // notify the user that the translations have been updated
-            Notification::make()
-                ->title('Automatische vertalingen voor \'' . $this->key . '\' zijn bijgewerkt.')
-                ->success()
-                ->sendToDatabase($user);
         })->afterResponse();
 
         return $this;
@@ -246,6 +239,10 @@ class Translation extends Model {
 
         $sourceValue = $this->getValue($sourceLocale->code);
         if (empty($sourceValue)) return [];
+
+        if (!Registry::hasGoogleCloudCredentials()) {
+            throw new \Exception("Cannot perform machine translations, because Google Cloud credentials are not configured.");
+        }
 
         $client = new TranslationServiceClient([
             'credentials' => config('fd-cms.google_application_credentials')
