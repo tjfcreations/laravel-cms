@@ -18,18 +18,18 @@ class TranslateShortcode extends Shortcode {
         // look in custom page translations
         if (isset($data['page']->page)) {
             $translation = Translation::get($key, $data['page']->page->unwrap(), 'custom');
-            if ($translation->exists) return $translation->translate();
+            if ($translation->has()) return $translation->translate();
         }
 
         // look in custom record translations
         if (isset($data['page']->record)) {
             $translation = Translation::get($key, $data['page']->record->unwrap(), 'custom');
-            if ($translation->exists) return $translation->translate();
+            if ($translation->has()) return $translation->translate();
         }
 
         // look in global translations
         $translation = Translation::get($key);
-        if ($translation) return $translation->translate();
+        if ($translation->has()) return $translation->translate();
 
         return null;
     }
