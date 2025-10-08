@@ -26,7 +26,7 @@ class PageResource extends Resource {
 
     protected static ?string $model = Page::class;
 
-    protected static ?string $navigationGroup = 'Pagina\'s';
+    protected static ?string $navigationGroup = 'Weergave';
     protected static ?string $navigationIcon = 'heroicon-o-document';
 
     protected static ?int $navigationSort = 50;

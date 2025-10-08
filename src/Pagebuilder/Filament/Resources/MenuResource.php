@@ -19,10 +19,10 @@ class MenuResource extends Resource {
 
     protected static ?string $model = Menu::class;
 
-    protected static ?string $navigationGroup = 'Pagina\'s';
+    protected static ?string $navigationGroup = 'Weergave';
     protected static ?string $navigationIcon = 'heroicon-o-bars-3';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 100;
 
     protected static ?string $label = 'menu';
     protected static ?string $pluralLabel = 'menu\'s';
