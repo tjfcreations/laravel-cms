@@ -26,10 +26,9 @@ class PageResource extends Resource {
 
     protected static ?string $model = Page::class;
 
-    protected static ?string $navigationGroup = 'Weergave';
     protected static ?string $navigationIcon = 'heroicon-o-document';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 999;
 
     protected static ?string $label = 'pagina';
     protected static ?string $pluralLabel = 'pagina\'s';

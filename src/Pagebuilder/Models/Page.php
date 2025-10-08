@@ -43,16 +43,19 @@ class Page extends Model implements TranslatableInterface {
         return $this->type === PageTypeEnum::Template;
     }
 
-    public function getRecord(): ?Model {
-        $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
-
+    public function getRecord(array $params): ?Model {
         if (isset($this->model) && class_exists($this->model)) {
-            $record = $this->model::where($routeParams)->first();
+            $record = $this->model::where($params)->first();
             if ($record instanceof Model) {
                 return $record;
             }
         }
 
         return null;
+    }
+
+    public function getCurrentRecord(): ?Model {
+        $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
+        return $this->getRecord($routeParams);
     }
 }

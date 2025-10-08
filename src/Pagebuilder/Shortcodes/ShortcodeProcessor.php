@@ -38,7 +38,9 @@ class ShortcodeProcessor {
         return array_merge($this->pageRenderer->getData(), $this->additionalData);
     }
 
-    public function process(string $text, array $data = []) {
+    public function process(mixed $text, array $data = []) {
+        if (!is_string($text)) return '';
+
         $this->additionalData = $data;
         $result = $this->processor->process($text);
         $this->additionalData = [];

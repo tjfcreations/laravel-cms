@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\ComponentAttributeBag;
 use Feenstra\CMS\Pagebuilder\Models\Menu;
+use Illuminate\Database\Eloquent\Model;
 
 class MenuItem {
     protected array $data;
@@ -48,8 +49,12 @@ class MenuItem {
         return $this->data['depth'] ?? 0;
     }
 
-    public function getPageId(): ?string {
-        return $this->data['page_id'] ?? null;
+    public function getPageId(): ?int {
+        return (int) $this->data['page_id'] ?? null;
+    }
+
+    public function getPageRecordId(): mixed {
+        return $this->data['page_record_id'] ?? null;
     }
 
     /**
@@ -130,9 +135,23 @@ class MenuItem {
             return $tel ? 'tel:' . $tel : null;
         }
 
-        if ($this->isPage() && $this->getPageId()) {
-            $page = Page::find($this->getPageId());
-            return $page ? $page->path : null;
+        if ($this->isPage()) {
+            $pageId = $this->getPageId();
+            $page = Page::findOrFail($pageId);
+            if (!$page) return null;
+
+            if ($page->isTemplate()) {
+                $recordId = $this->getPageRecordId();
+                $record = $page->getRecord(['id' => $recordId]);
+                if (!$record) return null;
+
+                $attributes = $record->toArray();
+
+                // replace {slug}, {id}, etc. in the path with the actual values from the record
+                return url(preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $page->path));
+            }
+
+            return $page->path;
         }
 
         return null;

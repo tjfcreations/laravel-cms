@@ -167,19 +167,19 @@ class MenuItemRepeater extends Repeater {
                     ->required()
                     ->selectablePlaceholder(false),
 
-                Forms\Components\Select::make('page')
+                Forms\Components\Select::make('page_id')
                     ->label('Pagina')
                     ->options(Page::pluck('name', 'id'))
                     ->searchable()
                     ->required()
                     ->live()
                     ->visible(fn(Forms\Get $get) => $get('type') === 'page')
-                    ->columnSpanFull(),
+                    ->columnSpan(1),
 
-                Forms\Components\Select::make('page_record')
+                Forms\Components\Select::make('page_record_id')
                     ->label('Record')
                     ->options(function (Forms\Get $get) {
-                        $pageId = $get('page');
+                        $pageId = $get('page_id');
                         if (!$pageId) return [];
 
                         $page = Page::find($pageId);
@@ -201,7 +201,7 @@ class MenuItemRepeater extends Repeater {
                     })
                     ->searchable()
                     ->visible(function (Forms\Get $get) {
-                        $pageId = $get('page');
+                        $pageId = $get('page_id');
                         if (!$pageId) return false;
 
                         $page = Page::find($pageId);

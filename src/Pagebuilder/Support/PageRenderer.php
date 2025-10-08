@@ -39,7 +39,7 @@ class PageRenderer {
 
     protected function buildPageData() {
         $wrappedPage = $this->wrap($this->page);
-        $record = $this->page->getRecord();
+        $record = $this->page->getCurrentRecord();
 
         $this->data = [];
         $this->data['page'] = (object) [];
