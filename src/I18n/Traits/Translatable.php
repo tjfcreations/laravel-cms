@@ -5,14 +5,11 @@ namespace Feenstra\CMS\I18n\Traits;
 use Feenstra\CMS\I18n\Interfaces\TranslatableInterface;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Feenstra\CMS\I18n\Models\Translation;
-use Feenstra\CMS\Pagebuilder\Traits\Selectable;
 use Illuminate\Support\Collection;
 use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Registry;
 
 trait Translatable {
-    use Selectable;
-
     public static function bootTranslatable() {
         if (Registry::isDisabled()) return false;
 

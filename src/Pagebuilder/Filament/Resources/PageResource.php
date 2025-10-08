@@ -139,7 +139,7 @@ class PageResource extends Resource {
             ->columns([
                 Columns\TextColumn::make('name')
                     ->label('Naam')
-                    ->description(fn(Page $record): string => $record->type !== PageTypeEnum::Default ? $record->type->getLabel() : '')
+                    ->description(fn(Page $page): string => $page->type !== PageTypeEnum::Default ? $page->type->getLabel() : '')
                     ->sortable()
                     ->searchable(),
                 Columns\TextColumn::make('path')

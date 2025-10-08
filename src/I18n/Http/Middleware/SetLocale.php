@@ -1,13 +1,14 @@
 <?php
-    namespace Feenstra\CMS\I18n\Http\Middleware;
 
-    use Closure;
-    use Illuminate\Support\Facades\App;
+namespace Feenstra\CMS\I18n\Http\Middleware;
 
-    class SetLocale {
-        public function handle($request, Closure $next) {
-            App::setLocale(session('locale', 'nl_NL'));
+use Closure;
+use Illuminate\Support\Facades\App;
 
-            return $next($request);
-        }
+class SetLocale {
+    public function handle($request, Closure $next) {
+        // App::setLocale(session('locale', 'nl_NL'));
+
+        return $next($request);
     }
+}

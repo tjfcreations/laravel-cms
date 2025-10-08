@@ -33,5 +33,8 @@ class CMSServiceProvider extends PackageServiceProvider {
         $this->app->register(PagebuilderServiceProvider::class);
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'fd-cms');
+
+        // register helper functions
+        require_once __DIR__ . '/helpers.php';
     }
 }

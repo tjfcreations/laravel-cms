@@ -1,61 +1,61 @@
 <?php
-    namespace Feenstra\CMS\Pagebuilder\Support;
 
-    use Illuminate\Support\Collection;
-    use Feenstra\CMS\Pagebuilder\Filament\Forms;
+namespace Feenstra\CMS\Pagebuilder\Support;
 
-    class QuickSelect {
-        public string $model;
-        public string $label;
-        public ?string $dateAttribute = null;
+use Illuminate\Support\Collection;
+use Feenstra\CMS\Pagebuilder\Filament\Forms;
 
-        public static function for(string $model): static {
-            $static = new static($model);
-            return $static;
-        }
+class QuickSelect {
+    public string $model;
+    public string $label;
+    public ?string $dateAttribute = null;
 
-        public function __construct(string $model) {
-            $this->model = $model;
-        }
+    public static function for(string $model): static {
+        $static = new static($model);
+        return $static;
+    }
 
-        /**
-         * Set the label for the inputs.
-         */
-        public function label(string $label): static {
-            $this->label = $label;
-            return $this;
-        }
+    public function __construct(string $model) {
+        $this->model = $model;
+    }
 
-        /**
-         * Set the attribute used for sorting recent records.
-         */
-        public function withRecent(string $dateAttribute = 'created_at'): static {
-            $this->dateAttribute = is_string($dateAttribute) ? $dateAttribute : null;
-            return $this;
-        }
+    /**
+     * Set the label for the inputs.
+     */
+    public function label(string $label): static {
+        $this->label = $label;
+        return $this;
+    }
 
-        public function getRecords(array $data): Collection {
-            switch($data['view']) {
-                case 'all':
-                    return $this->model::all();
-                case 'recent':
-                    return $this->model::query()
-                        ->orderBy($this->dateAttribute, 'desc')
-                        ->limit($data['limit'])
-                        ->get();
-                case 'selected':
-                    return $this->model::whereIn('id', $data['records'])
-                        ->get();
-                default:
-                    return collect();
-            }
+    /**
+     * Set the attribute used for sorting recent records.
+     */
+    public function withRecent(string $dateAttribute = 'created_at'): static {
+        $this->dateAttribute = is_string($dateAttribute) ? $dateAttribute : null;
+        return $this;
+    }
 
-        }
-
-        public function toFormComponent() {
-            return Forms\Components\QuickSelect::make()
-                ->model_($this->model)
-                ->label($this->label)
-                ->dateAttribute($this->dateAttribute);
+    public function getRecords(array $data): Collection {
+        switch ($data['view']) {
+            case 'all':
+                return $this->model::all();
+            case 'recent':
+                return $this->model::query()
+                    ->orderBy($this->dateAttribute, 'desc')
+                    ->limit($data['limit'])
+                    ->get();
+            case 'selected':
+                return $this->model::whereIn('id', $data['record_ids'] ?? [])
+                    ->get();
+            default:
+                return collect();
         }
     }
+
+    public function toFormComponent() {
+        return Forms\Components\QuickSelect::make()
+            ->model_($this->model)
+            ->label($this->label)
+            ->dateAttribute($this->dateAttribute);
+    }
+}

@@ -10,9 +10,8 @@ use Illuminate\Support\ServiceProvider;
 class PagebuilderServiceProvider extends ServiceProvider {
     public function bootingPackage() {
         $this->publishes([
-            __DIR__.'/Filament/Resources' => app_path('Filament/Resources'),
+            __DIR__ . '/Filament/Resources' => app_path('Filament/Resources'),
         ], 'filament-resources');
-
     }
 
     public function boot(): void {
@@ -21,6 +20,6 @@ class PagebuilderServiceProvider extends ServiceProvider {
         $router->pushMiddlewareToGroup('web', SetLocale::class);
 
         // register page routes
-        $this->app->register(DynamicRouteServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
     }
 }

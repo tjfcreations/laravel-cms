@@ -20,6 +20,7 @@ use Google\Cloud\Translate\V3\TranslateTextRequest;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Feenstra\CMS\I18n\Registry;
+use Feenstra\CMS\Pagebuilder\Http\Controllers\PageController;
 
 class Translation extends Model {
     protected $table = 'fd_cms_translations';
@@ -37,11 +38,11 @@ class Translation extends Model {
     }
 
     /**
-     * Translate to the given locale (current app locale by default). 
+     * Translate to the given locale (current locale by default). 
      * Will fall back to the default locale if no translation exists for the given locale.
      */
     public function translate(?string $localeCode = null): string {
-        $localeCode = $localeCode ?? app()->currentLocale();
+        $localeCode = $localeCode ?? PageController::currentLocale()->code;
         $value = $this->getValue($localeCode);
 
         if (empty($value)) {
@@ -74,7 +75,7 @@ class Translation extends Model {
      * Check if a translation exists for the given locale (current locale by default).
      */
     public function has(?string $localeCode = null): bool {
-        $localeCode = $localeCode ?? app()->currentLocale();
+        $localeCode = $localeCode ?? PageController::currentLocale()->code;
         return !empty(Arr::get($this->translations, "$localeCode.value"));
     }
 

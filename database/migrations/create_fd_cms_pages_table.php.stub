@@ -21,6 +21,8 @@ return new class extends Migration {
 
             $table->index('path');
             $table->index('error_code');
+            $table->index('model');
+            $table->index('type');
 
             $table->timestamps();
         });

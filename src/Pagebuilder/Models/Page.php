@@ -3,11 +3,13 @@
 namespace Feenstra\CMS\Pagebuilder\Models;
 
 use Feenstra\CMS\I18n\Interfaces\TranslatableInterface;
+use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Traits\Translatable;
 use Illuminate\Database\Eloquent\Model;
 use Feenstra\CMS\Pagebuilder\Enums\PageTypeEnum;
-use Feenstra\CMS\Pagebuilder\Http\Controllers\DynamicPageController;
+use Feenstra\CMS\Pagebuilder\Http\Controllers\PageController;
 use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
+use Feenstra\CMS\Pagebuilder\Helpers\PageHelper;
 
 class Page extends Model implements TranslatableInterface {
     use Translatable;
@@ -26,13 +28,6 @@ class Page extends Model implements TranslatableInterface {
         'pageheader' => 'array',
         'options' => 'array'
     ];
-
-    /**
-     * Get the current page from the request context.
-     */
-    public static function current(): Page {
-        return DynamicPageController::getCurrentPage();
-    }
 
     public function render(): string {
         $this->renderer = new PageRenderer($this);
@@ -57,5 +52,9 @@ class Page extends Model implements TranslatableInterface {
     public function getCurrentRecord(): ?Model {
         $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
         return $this->getRecord($routeParams);
+    }
+
+    public function localizedUrl(?Locale $targetLocale = null, ?Model $record = null): string {
+        return PageHelper::getLocalizedUrl($this, $targetLocale, $record ?? $this->getCurrentRecord());
     }
 }

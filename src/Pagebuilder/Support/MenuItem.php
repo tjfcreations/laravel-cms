@@ -34,7 +34,7 @@ class MenuItem {
     public function getLabel(): ?string {
         $label = $this->data['label'] ?? '';
 
-        $page = Page::current();
+        $page = page()->current();
         $processor = $page->renderer->getShortcodeProcessor();
         $processedLabel = $processor->process($label, [
             'translationSources' => [
@@ -145,13 +145,10 @@ class MenuItem {
                 $record = $page->getRecord(['id' => $recordId]);
                 if (!$record) return null;
 
-                $attributes = $record->toArray();
-
-                // replace {slug}, {id}, etc. in the path with the actual values from the record
-                return url(preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $page->path));
+                return $page->localizedUrl(null, $record);
             }
 
-            return $page->path;
+            return $page->localizedUrl();
         }
 
         return null;

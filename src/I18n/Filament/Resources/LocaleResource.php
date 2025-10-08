@@ -37,16 +37,25 @@ class LocaleResource extends Resource {
                     ->helperText('Deze naam wordt getoond op de website zelf.')
                     ->placeholder('English')
                     ->required(),
-                Forms\Components\TextInput::make('code')
-                    ->label('Taalcode')
-                    ->helperText('Bijvoorbeeld nl_NL, nl_BE of en_GB.')
-                    ->placeholder('en_GB')
-                    ->unique(ignoreRecord: true)
-                    ->required(),
                 Forms\Components\FileUpload::make('flag_path')
                     ->directory('uploads/locale-flags')
                     ->label('Vlag')
                     ->image()
+                    ->columnSpan(1),
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('code')
+                            ->label('Taalcode')
+                            ->placeholder('nl_NL, en_GB, de_DE, nl_BE...')
+                            ->unique(ignoreRecord: true)
+                            ->required(),
+                        Forms\Components\TextInput::make('hreflang')
+                            ->label('Hreflang')
+                            ->placeholder('nl, en, de, nl-be...')
+                            ->unique(ignoreRecord: true)
+                            ->helperText('Wordt gebruikt als voorvoegsel in de URL')
+                            ->required(),
+                    ])
                     ->columnSpan(1),
                 Forms\Components\ToggleButtons::make('is_default')
                     ->label('Standaardtaal')
