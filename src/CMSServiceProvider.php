@@ -32,6 +32,6 @@ class CMSServiceProvider extends PackageServiceProvider {
         $this->app->register(MediaServiceProvider::class);
         $this->app->register(PagebuilderServiceProvider::class);
 
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'media-gallery');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'fd-cms');
     }
 }

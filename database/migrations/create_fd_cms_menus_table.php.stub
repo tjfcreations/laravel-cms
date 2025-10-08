@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Feenstra\CMS\Pagebuilder\Models\Menu;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void {
+        Schema::create('fd_cms_menus', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('location');
+            $table->longText('items')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void {
+        Schema::dropIfExists('fd_cms_menus');
+    }
+};

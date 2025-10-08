@@ -13,5 +13,11 @@ return [
         'enabled' => true,
         'disk_name' => env('FD_CMS_MEDIA_DISK_NAME', 'media'),
         'fallback_url' => 'data:image/gif;base64,R0lGODlhAQABAHAAACwAAAAAAQABAIHu7u4AAAAAAAAAAAACAkQBADs='
-    ]
+    ],
+
+    'pagebuilder' => [
+        'menu' => [
+            'max_depth' => 1,
+        ],
+    ],
 ];
