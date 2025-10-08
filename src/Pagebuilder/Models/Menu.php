@@ -41,7 +41,7 @@ class Menu extends Model implements TranslatableInterface {
 
         foreach ($this->items as $itemData) {
             $depth = $itemData['depth'] ?? 0;
-            $menuItem = new MenuItem($itemData);
+            $menuItem = new MenuItem($itemData, $this);
 
             if ($depth === 0) {
                 // Top-level item

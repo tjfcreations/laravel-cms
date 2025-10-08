@@ -15,15 +15,22 @@ class TranslateShortcode extends Shortcode {
             $key = $arguments->get('key');
         }
 
-        // look in custom page translations
-        if (isset($data['page']->page)) {
-            $translation = Translation::get($key, $data['page']->page->unwrap(), 'custom');
-            if ($translation->has()) return $translation->translate();
+        $translationSources = collect();
+
+        if (is_array(@$data['translationSources'])) {
+            $translationSources->push(...$data['translationSources']);
         }
 
-        // look in custom record translations
+        if (isset($data['page']->page)) {
+            $translationSources->push($data['page']->page->unwrap());
+        }
+
         if (isset($data['page']->record)) {
-            $translation = Translation::get($key, $data['page']->record->unwrap(), 'custom');
+            $translationSources->push($data['page']->record->unwrap());
+        }
+
+        foreach ($translationSources as $record) {
+            $translation = Translation::get($key, $record, 'custom');
             if ($translation->has()) return $translation->translate();
         }
 

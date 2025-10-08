@@ -13,6 +13,8 @@ class ShortcodeProcessor {
     protected PageRenderer $pageRenderer;
     protected Processor $processor;
 
+    protected array $additionalData = [];
+
     public function __construct(PageRenderer $pageRenderer) {
         $this->pageRenderer = $pageRenderer;
 
@@ -25,14 +27,22 @@ class ShortcodeProcessor {
         foreach (Registry::shortcodes() as $shortcode) {
             $handlers->add($shortcode::$name, function (ShortcodeInterface $s) use ($shortcode) {
                 $arguments = collect($s->getParameters());
-                return $shortcode->resolve($arguments, $this->pageRenderer->getData(), $this);
+                return $shortcode->resolve($arguments, $this->getData(), $this);
             });
         }
 
         $this->processor = new Processor(new RegularParser(), $handlers);
     }
 
-    public function process(string $text) {
-        return $this->processor->process($text);
+    public function getData() {
+        return array_merge($this->pageRenderer->getData(), $this->additionalData);
+    }
+
+    public function process(string $text, array $data = []) {
+        $this->additionalData = $data;
+        $result = $this->processor->process($text);
+        $this->additionalData = [];
+
+        return $result;
     }
 }

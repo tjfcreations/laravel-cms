@@ -1,14 +1,22 @@
 <?php
-    namespace Feenstra\CMS\Pagebuilder\Http\Controllers;
 
-    use Feenstra\CMS\Pagebuilder\Models\Page;
+namespace Feenstra\CMS\Pagebuilder\Http\Controllers;
 
-    class DynamicPageController {
-        public function show()  {
-            $pageId = request()->route('pageId');
+use Feenstra\CMS\Pagebuilder\Models\Page;
 
-            $page = Page::findOrFail($pageId);
+class DynamicPageController {
+    protected static Page $currentPage;
 
-            return $page->render();
-        }
+    public function show() {
+        $pageId = request()->route('pageId');
+        $page = Page::findOrFail($pageId) ?? Page::make();
+
+        static::$currentPage = $page;
+
+        return $page->render();
     }
+
+    public static function getCurrentPage() {
+        return static::$currentPage;
+    }
+}

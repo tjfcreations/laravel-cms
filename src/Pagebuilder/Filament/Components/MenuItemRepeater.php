@@ -12,7 +12,7 @@ use Feenstra\CMS\Pagebuilder\Models\Page;
 use Filament\Forms\Components\Component;
 
 class MenuItemRepeater extends Repeater {
-    protected string $view = 'fd-cms::components.pagebuilder.filament.forms.menu-item-repeater';
+    protected string $view = 'fd-cms::pagebuilder.filament.forms.components.menu-item-repeater';
 
     protected function getMaxDepth(): int {
         return config('fd-cms.pagebuilder.menu.max_depth', 3);
@@ -145,43 +145,92 @@ class MenuItemRepeater extends Repeater {
 
     protected function getEditForm(Form $form) {
         return $form
-            ->columns(4)
+            ->columns(2)
             ->schema([
                 Forms\Components\TextInput::make('label')
                     ->label('Label')
                     ->placeholder('Nieuw item')
                     ->required()
-                    ->live()
-                    ->columnSpan(3),
+                    ->live(),
 
                 Forms\Components\Select::make('type')
                     ->label('Type')
                     ->options([
                         'page' => 'Pagina',
-                        'url' => 'Externe link',
-                        'title' => 'Titel'
+                        'external_url' => 'Externe URL',
+                        'title' => 'Titel',
+                        'mailto' => 'E-mailadres',
+                        'tel' => 'Telefoon',
                     ])
                     ->live()
                     ->default('page')
                     ->required()
-                    ->columnSpan(1)
                     ->selectablePlaceholder(false),
 
-                Forms\Components\Select::make('page_id')
+                Forms\Components\Select::make('page')
                     ->label('Pagina')
                     ->options(Page::pluck('name', 'id'))
                     ->searchable()
                     ->required()
+                    ->live()
                     ->visible(fn(Forms\Get $get) => $get('type') === 'page')
-                    ->columnSpan(4),
+                    ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('url')
-                    ->label('Externe link')
+                Forms\Components\Select::make('page_record')
+                    ->label('Record')
+                    ->options(function (Forms\Get $get) {
+                        $pageId = $get('page');
+                        if (!$pageId) return [];
+
+                        $page = Page::find($pageId);
+                        if (!$page || !$page->isTemplate()) return [];
+
+                        $model = $page->model;
+                        if (!$model || !class_exists($model)) return [];
+
+                        $records = $model::all();
+                        return $records
+                            ->map(function ($record) {
+                                return [
+                                    'label' => method_exists($record, 'getLabel') ? $record->getLabel() : $record->id,
+                                    'id' => $record->id
+                                ];
+                            })
+                            ->sortBy('label')
+                            ->pluck('label', 'id');
+                    })
+                    ->searchable()
+                    ->visible(function (Forms\Get $get) {
+                        $pageId = $get('page');
+                        if (!$pageId) return false;
+
+                        $page = Page::find($pageId);
+                        return $page && $page->isTemplate();
+                    }),
+
+                Forms\Components\TextInput::make('external_url')
+                    ->label('Externe URL')
                     ->url()
                     ->required()
-                    ->visible(fn(Forms\Get $get) => $get('type') === 'url')
-                    ->placeholder('https://example.com/externe-pagina')
-                    ->columnSpan(4),
+                    ->visible(fn(Forms\Get $get) => $get('type') === 'external_url')
+                    ->placeholder('https://example.com')
+                    ->columnSpanFull(),
+
+                Forms\Components\TextInput::make('mailto')
+                    ->label('E-mailadres')
+                    ->email()
+                    ->required()
+                    ->visible(fn(Forms\Get $get) => $get('type') === 'mailto')
+                    ->placeholder('naam@example.com')
+                    ->columnSpanFull(),
+
+                Forms\Components\TextInput::make('tel')
+                    ->label('Telefoonnummer')
+                    ->tel()
+                    ->required()
+                    ->visible(fn(Forms\Get $get) => $get('type') === 'tel')
+                    ->placeholder('06 12345678')
+                    ->columnSpanFull(),
             ]);
     }
 
