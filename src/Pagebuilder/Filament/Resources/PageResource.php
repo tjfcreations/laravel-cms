@@ -26,13 +26,13 @@ class PageResource extends Resource {
 
     protected static ?string $model = Page::class;
 
-    protected static ?string $navigationGroup = 'Menus\'s';
+    protected static ?string $navigationGroup = 'Pagina\'s';
     protected static ?string $navigationIcon = 'heroicon-o-document';
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $label = 'menu';
-    protected static ?string $pluralLabel = 'menu\'s';
+    protected static ?string $label = 'pagina';
+    protected static ?string $pluralLabel = 'pagina\'s';
 
     public static function form(Form $form): Form {
         return $form
