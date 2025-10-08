@@ -40,14 +40,14 @@ class Menu extends Model implements TranslatableInterface {
         $currentParent = null;
 
         foreach ($this->items as $itemData) {
-            $level = $itemData['level'] ?? 0;
+            $depth = $itemData['depth'] ?? 0;
             $menuItem = new MenuItem($itemData);
 
-            if ($level === 0) {
+            if ($depth === 0) {
                 // Top-level item
                 $currentParent = $menuItem;
                 $items->push($currentParent);
-            } elseif ($level === 1 && $currentParent !== null) {
+            } elseif ($depth === 1 && $currentParent !== null) {
                 // Sub-item - add to current parent
                 $currentParent->addChild($menuItem);
             }

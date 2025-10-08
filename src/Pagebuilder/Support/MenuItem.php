@@ -22,8 +22,8 @@ class MenuItem {
         return $this->data['label'] ?? '';
     }
 
-    public function getLevel(): int {
-        return $this->data['level'] ?? 0;
+    public function getDepth(): int {
+        return $this->data['depth'] ?? 0;
     }
 
     public function getPageId(): ?string {
