@@ -4,12 +4,13 @@ namespace Feenstra\CMS\Pagebuilder\Http\Controllers;
 
 use Feenstra\CMS\Pagebuilder\Models\Page;
 use Feenstra\CMS\I18n\Models\Locale;
+use Illuminate\Support\Facades\Auth;
 
 class PageController {
     protected static Page $currentPage;
     protected static Locale $currentLocale;
 
-    public function show() {
+    public function show(?Page $page = null) {
         $hreflang = request()->route('locale');
         if (!empty($hreflang)) {
             $locale = Locale::where('hreflang', $hreflang)->first();
@@ -19,8 +20,14 @@ class PageController {
             }
         }
 
-        $pageId = request()->route('pageId');
-        $page = Page::findOrFail($pageId) ?? Page::make();
+        if (!$page) {
+            $pageId = request()->route('pageId');
+            $page = Page::findOrFail($pageId) ?? Page::make();
+        }
+
+        if ($page->isDraft() && !Auth::user()) {
+            return abort(404);
+        }
 
         static::$currentPage = $page;
 

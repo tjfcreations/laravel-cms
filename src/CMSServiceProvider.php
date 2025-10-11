@@ -9,6 +9,8 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderBlock;
 use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderShortcode;
 use Feenstra\CMS\Pagebuilder\PagebuilderServiceProvider;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Feenstra\CMS\Exceptions\Handler;
 
 class CMSServiceProvider extends PackageServiceProvider {
     public function configurePackage(Package $package): void {
@@ -31,6 +33,8 @@ class CMSServiceProvider extends PackageServiceProvider {
     public function bootingPackage() {
         $this->app->register(MediaServiceProvider::class);
         $this->app->register(PagebuilderServiceProvider::class);
+
+        $this->app->singleton(ExceptionHandler::class, Handler::class);
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'fd-cms');
 

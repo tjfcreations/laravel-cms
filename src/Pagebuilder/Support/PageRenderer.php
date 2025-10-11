@@ -39,13 +39,16 @@ class PageRenderer {
 
     protected function buildPageData() {
         $wrappedPage = $this->wrap($this->page);
-        $record = $this->page->getCurrentRecord();
 
         $this->data = [];
         $this->data['page'] = (object) [];
 
-        // add record
-        if ($record) {
+        if ($this->page->isTemplate()) {
+            $record = $this->page->getRequestRecord();
+            if (!$record) {
+                return abort(404);
+            }
+
             $this->data['page']->record = $this->wrap($record);
         }
 
