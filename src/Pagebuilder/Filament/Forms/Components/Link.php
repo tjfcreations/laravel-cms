@@ -46,6 +46,7 @@ class Link extends Field {
 
                 Forms\Components\Select::make('page_record_id')
                     ->label('Record')
+                    ->required()
                     ->options(function (Forms\Get $get) {
                         $pageId = $get('page_id');
                         if (!$pageId) return [];
