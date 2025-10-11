@@ -17,8 +17,10 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Feenstra\CMS\Pagebuilder\Enums\PageStatusEnum;
+use Feenstra\CMS\Pagebuilder\Filament\Forms\Components\ButtonRepeater;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Feenstra\CMS\Pagebuilder\Registry;
 
 class PageResource extends Resource {
@@ -42,22 +44,20 @@ class PageResource extends Resource {
                     ->placeholder('Nieuwe pagina')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('path')
+                    ->helperText('Gebruik {slug} of {id} voor een template.')
+                    ->placeholder('/nieuwe-pagina')
+                    ->dehydrateStateUsing(fn($state) => '/' . trim(trim($state), '/'))
+                    ->label('Pad')
+                    ->hidden(fn(Get $get) => $get('type') === PageTypeEnum::Error->value),
                 Forms\Components\ToggleButtons::make('status')
                     ->label('Status')
                     ->grouped()
                     ->options(PageStatusEnum::class)
                     ->default(PageStatusEnum::Published)
-                    ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->helperText('Deze titel wordt getoond in het browsertabblad.')
-                    ->label('Titel')
-                    ->placeholder('Nieuwe pagina')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('path')
-                    ->helperText('Gebruik {slug} of {id} voor een template.')
-                    ->placeholder('/nieuwe-pagina')
-                    ->dehydrateStateUsing(fn($state) => '/' . trim(trim($state), '/'))
-                    ->label('Pad'),
+                    ->required()
+                    ->columnSpanFull()
+                    ->hidden(),
                 Forms\Components\Hidden::make('options')
                     ->default([]),
                 Tabs::make()
@@ -73,6 +73,26 @@ class PageResource extends Resource {
                         //     ->schema([
                         //         Pageheader::make('header')
                         //     ]),
+                        Tabs\Tab::make('header')
+                            ->label('Header')
+                            ->schema([
+                                Section::make()
+                                    ->schema([
+                                        Forms\Components\Grid::make(1)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('title')
+                                                    ->label('Titel')
+                                                    ->maxLength(255),
+                                                Forms\Components\Textarea::make('header_subtitle')
+                                                    ->label('Subtitel')
+                                                    ->rows(3),
+                                                ButtonRepeater::make('buttons')
+                                            ])
+                                            ->columnSpan(1)
+                                    ])
+                                    ->columns(2)
+                                    ->columnSpanFull()
+                            ]),
                         Tabs\Tab::make('settings')
                             ->label('Instellingen')
                             ->columns(2)
@@ -156,7 +176,13 @@ class PageResource extends Resource {
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ])
-            ->defaultSort('name', 'asc');
+            ->defaultSort('name', 'asc')
+            ->defaultPaginationPageOption(25)
+            ->modifyQueryUsing(function (Builder $query) {
+                $query
+                    ->orderByRaw("CASE WHEN type = 'error' THEN 1 ELSE 0 END ASC")
+                    ->orderBy('name', 'asc');
+            });
     }
 
     public static function getRelations(): array {

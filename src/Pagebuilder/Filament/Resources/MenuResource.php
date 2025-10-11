@@ -10,7 +10,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns;
 use Filament\Tables;
 use Feenstra\CMS\Pagebuilder\Models\Menu;
-use Feenstra\CMS\Pagebuilder\Filament\Components\MenuItemRepeater;
+use Feenstra\CMS\Pagebuilder\Filament\Forms\Components\MenuItemRepeater;
 use Feenstra\CMS\Pagebuilder\Enums\MenuLocationEnum;
 use Filament\Resources\Resource;
 
