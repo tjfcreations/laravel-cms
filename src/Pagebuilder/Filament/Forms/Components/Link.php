@@ -13,8 +13,6 @@ class Link extends Field {
     protected function setUp(): void {
         parent::setUp();
 
-        $name = $this->getName();
-
         $this
             ->schema([
                 Forms\Components\TextInput::make('label')
