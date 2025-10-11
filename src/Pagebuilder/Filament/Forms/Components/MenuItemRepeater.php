@@ -23,6 +23,7 @@ class MenuItemRepeater extends Repeater {
 
         $this
             ->addActionLabel('Item toevoegen')
+            ->addActionAlignment('left')
             ->reorderableWithButtons()
             ->itemLabel(fn(array $state) => (@$state['link']['label'] ?? '(geen label)'))
             ->extraItemActions([
