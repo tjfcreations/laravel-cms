@@ -16,13 +16,11 @@ trait Templatable {
         return $this->id;
     }
 
-    /**
-     * Get the URL of the model based on a template page.
-     */
-    public function getTemplatePage(): ?Page {
-        return Page::where([
-            'model' => get_class($this),
-            'type' => PageTypeEnum::Template->value
-        ])->first();
+    public function getTemplatableLabel(): string {
+        return Str::snake(class_basename(static::class), ' ');
+    }
+
+    public function getModelPluralLabel(): string {
+        return Str::plural($this->getTemplatableLabel());
     }
 }

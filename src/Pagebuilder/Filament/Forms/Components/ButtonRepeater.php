@@ -6,6 +6,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Forms;
+use Filament\Forms\Components\Component;
 
 class ButtonRepeater extends Repeater {
     protected function setUp(): void {
@@ -13,11 +14,29 @@ class ButtonRepeater extends Repeater {
 
         $this
             ->label('Knoppen')
+            ->addActionLabel('Knop toevoegen')
+            ->addActionAlignment('left')
+            ->itemLabel(fn(array $state) => (@$state['link']['label'] ?? '(geen label)'))
             ->extraItemActions([
                 $this->getItemEditAction(),
             ])
-            ->addActionLabel('Knop toevoegen')
-            ->addActionAlignment('left');
+            ->extraAttributes(['class' => 'fd-cms-repeater-no-content']);
+    }
+
+    public function getAddAction(): Action {
+        return parent::getAddAction()
+            ->form(function (Form $form) {
+                return $this->getEditForm($form);
+            })
+            ->modalSubmitActionLabel('Toevoegen')
+            ->action(function (array $data, Component $component): void {
+                $state = $component->getState();
+
+                $newUuid = $component->generateUuid();
+                $state[$newUuid] = $data;
+
+                $component->state($state);
+            });
     }
 
     protected function getItemEditAction(): Action {
@@ -44,25 +63,11 @@ class ButtonRepeater extends Repeater {
         return $form
             ->columns(2)
             ->schema([
-                Forms\Components\TextInput::make('label')
-                    ->label('Label')
-                    ->placeholder('Mijn knop')
-                    ->required()
-                    ->live(),
-
-                Forms\Components\Select::make('type')
-                    ->label('Type')
-                    ->options([
-                        'page' => 'Pagina',
-                        'external_url' => 'Externe URL',
-                        'title' => 'Titel',
-                        'mailto' => 'E-mailadres',
-                        'tel' => 'Telefoon',
-                    ])
-                    ->live()
-                    ->default('page')
-                    ->required()
-                    ->selectablePlaceholder(false),
+                Link::make('link')
+                    ->placeholder('Nieuwe knop')
+                    ->email()
+                    ->externalUrl()
+                    ->tel()
             ]);
     }
 }

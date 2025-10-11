@@ -27,7 +27,7 @@ class CMSPlugin implements Plugin {
         // hide menu repeater content
         FilamentView::registerRenderHook(
             PanelsRenderHook::BODY_START,
-            fn(): string => '<style>.fd-cms-menu-resource-form .fi-fo-repeater-item-content .fi-fo-repeater-item-content { display: none; }</style>',
+            fn(): string => '<style>.fd-cms-repeater-no-content .fi-fo-repeater-item-content { display: none; }</style>',
         );
     }
 }

@@ -4,7 +4,7 @@
 ])
 
 @php
-    $url = $item->getUrl();
+    $url = $item->url();
 
     if (!empty($url)) {
         $element = 'a';
@@ -16,6 +16,6 @@
     @if (isset($slot) && $slot->isNotEmpty())
         {{ $slot }}
     @else
-        {{ $item->getLabel() }}
+        {{ $item->label() }}
     @endif
     </{{ $element }}>

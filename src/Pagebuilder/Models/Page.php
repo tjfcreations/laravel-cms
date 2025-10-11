@@ -29,7 +29,6 @@ class Page extends Model implements TranslatableInterface {
         'type' => PageTypeEnum::class,
         'status' => PageStatusEnum::class,
         'pagebuilder' => 'array',
-        'pageheader' => 'array',
         'options' => 'array'
     ];
 

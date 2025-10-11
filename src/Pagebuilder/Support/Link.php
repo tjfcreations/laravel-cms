@@ -11,12 +11,20 @@ class Link {
         $this->data = (array) $data;
     }
 
-    public function getType(): ?string {
+    public function type(): ?string {
         return @$this->data['type'] ?? null;
     }
 
-    public function getLabel(): string {
-        return @$this->data['label'] ?? '';
+    public function label(array $translationSources = []): string {
+        $label = @$this->data['label'] ?? '';
+
+        $page = page()->current();
+        $processor = $page->renderer->getShortcodeProcessor();
+        $processedLabel = $processor->process($label, [
+            'translationSources' => $translationSources
+        ]);
+
+        return $processedLabel;
     }
 
     public function getPageId(): ?int {
@@ -28,25 +36,25 @@ class Link {
     }
 
     public function isPage(): bool {
-        return $this->getType() === 'page';
+        return $this->type() === 'page';
     }
 
     public function isMailto(): bool {
-        return $this->getType() === 'mailto';
+        return $this->type() === 'mailto';
     }
 
     public function isTel(): bool {
-        return $this->getType() === 'tel';
+        return $this->type() === 'tel';
     }
 
     public function isExternalUrl(): bool {
-        return $this->getType() === 'url';
+        return $this->type() === 'url';
     }
 
     /**
      * Get the corresponding url based on the type of the menu item.
      */
-    public function getUrl() {
+    public function url() {
         if ($this->isExternalUrl()) {
             return @$this->data['external_url'] ?? null;
         }
@@ -72,7 +80,13 @@ class Link {
 
             if ($page->isTemplate()) {
                 $recordId = $this->getPageRecordId();
-                $record = $page->getRecord(['id' => $recordId]);
+
+                if ($recordId === 'CURRENT_PAGE_RECORD_ID') {
+                    $record = page()->current()->getRequestRecord();
+                } else {
+                    $record = $page->getRecord(['id' => $recordId]);
+                }
+
                 if (!$record) return null;
 
                 return $page->localizedUrl(null, $record);

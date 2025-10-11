@@ -149,6 +149,10 @@ class MenuItemRepeater extends Repeater {
             ->columns(2)
             ->schema([
                 Link::make('link')
+                    ->placeholder('Nieuw item')
+                    ->tel()
+                    ->email()
+                    ->externalUrl()
             ]);
     }
 

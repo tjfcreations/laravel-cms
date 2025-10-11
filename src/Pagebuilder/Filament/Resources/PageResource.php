@@ -83,10 +83,10 @@ class PageResource extends Resource {
                                                 Forms\Components\TextInput::make('title')
                                                     ->label('Titel')
                                                     ->maxLength(255),
-                                                Forms\Components\Textarea::make('header_subtitle')
+                                                Forms\Components\Textarea::make('options.header.subtitle')
                                                     ->label('Subtitel')
                                                     ->rows(3),
-                                                ButtonRepeater::make('buttons')
+                                                ButtonRepeater::make('options.header.buttons')
                                             ])
                                             ->columnSpan(1)
                                     ])
@@ -148,7 +148,13 @@ class PageResource extends Resource {
     protected static function getModelOptions(): array {
         $options = [];
         foreach (Registry::models() as $model) {
-            $options[$model::class] = class_basename($model);
+            $label = class_basename($model);
+
+            if (method_exists($model, 'getTemplatableLabel')) {
+                $label = (new $model())->getTemplatableLabel();
+            }
+
+            $options[$model::class] = ucfirst($label);
         }
 
         return $options;

@@ -36,18 +36,8 @@ class MenuItem {
         return $this->data['depth'] ?? 0;
     }
 
-    public function getLabel() {
-        $label = $this->link->getLabel();
-
-        $page = page()->current();
-        $processor = $page->renderer->getShortcodeProcessor();
-        $processedLabel = $processor->process($label, [
-            'translationSources' => [
-                $this->getMenu()
-            ]
-        ]);
-
-        return $processedLabel;
+    public function label() {
+        return $this->link->label([$this->getMenu()]);
     }
 
     /**
@@ -83,7 +73,7 @@ class MenuItem {
 
     public function isActive(): bool {
         $currentUrl = request()->path();
-        return trim($this->getUrl(), '/') === trim($currentUrl, '/') || $this->hasActiveChild();
+        return trim($this->url(), '/') === trim($currentUrl, '/') || $this->hasActiveChild();
     }
 
     public function hasActiveChild(): bool {

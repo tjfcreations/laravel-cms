@@ -7,7 +7,11 @@ use Feenstra\Cms\Pagebuilder\Support\Link;
 trait HasLink {
     protected Link $link;
 
-    public function getUrl() {
-        return $this->link->getUrl();
+    public function label() {
+        return $this->link->label();
+    }
+
+    public function url() {
+        return $this->link->url();
     }
 }
