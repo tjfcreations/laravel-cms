@@ -50,14 +50,6 @@ class PageResource extends Resource {
                     ->dehydrateStateUsing(fn($state) => '/' . trim(trim($state), '/'))
                     ->label('Pad')
                     ->hidden(fn(Get $get) => $get('type') === PageTypeEnum::Error->value),
-                Forms\Components\ToggleButtons::make('status')
-                    ->label('Status')
-                    ->grouped()
-                    ->options(PageStatusEnum::class)
-                    ->default(PageStatusEnum::Published)
-                    ->required()
-                    ->columnSpanFull()
-                    ->hidden(),
                 Forms\Components\Hidden::make('options')
                     ->default([]),
                 Tabs::make()
@@ -131,6 +123,13 @@ class PageResource extends Resource {
                                     ->required()
                                     ->placeholder('Kies een foutcode...')
                                     ->visible(fn(Get $get) => self::isPageType(PageTypeEnum::Error, $get('type'))),
+                                Forms\Components\ToggleButtons::make('status')
+                                    ->label('Status')
+                                    ->grouped()
+                                    ->options(PageStatusEnum::class)
+                                    ->default(PageStatusEnum::Published)
+                                    ->required()
+                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
