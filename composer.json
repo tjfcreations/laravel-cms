@@ -1,6 +1,6 @@
 {
     "name": "feenstra/laravel-cms",
-    "version": "1.0.18",
+    "version": "1.0.19",
     "type": "library",
     "license": "MIT",
     "autoload": {
