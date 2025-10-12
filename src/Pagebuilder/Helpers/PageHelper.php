@@ -18,64 +18,69 @@ class PageHelper {
     }
 
     public function url(mixed $slugOrObject, ?Model $record = null) {
-        $pageSlug = null;
-        $class = null;
+        return once(function () use ($slugOrObject, $record) {
+            $pageSlug = null;
+            $class = null;
 
-        // determine if input is a slug string, a class name, or a model instance
-        if (is_string($slugOrObject)) {
-            if (class_exists($slugOrObject)) {
-                $class = $slugOrObject;
-            } else {
-                $pageSlug = $slugOrObject;
+            // determine if input is a slug string, a class name, or a model instance
+            if (is_string($slugOrObject)) {
+                if (class_exists($slugOrObject)) {
+                    $class = $slugOrObject;
+                } else {
+                    $pageSlug = $slugOrObject;
+                }
+            } else if ($slugOrObject instanceof Model) {
+                $record = $slugOrObject;
             }
-        } else if ($slugOrObject instanceof Model) {
-            $record = $slugOrObject;
-        }
 
-        // determine slug from class or record if not explicitly provided
-        if (empty($pageSlug)) {
-            if (isset($class)) {
-                $pageSlug = strtolower(class_basename($class)) . '.index';
-            } else if (isset($record)) {
-                $pageSlug = strtolower(class_basename($record)) . '.show';
+            // determine slug from class or record if not explicitly provided
+            if (empty($pageSlug)) {
+                if (isset($class)) {
+                    $pageSlug = strtolower(class_basename($class)) . '.index';
+                } else if (isset($record)) {
+                    $pageSlug = strtolower(class_basename($record)) . '.show';
+                }
             }
-        }
 
-        if (isset($pageSlug)) {
-            $page = Page::where('slug', $pageSlug)->first();
-        }
+            if (isset($pageSlug)) {
+                $page = Page::findBySlug($pageSlug);
+            }
 
-        if (isset($page)) {
-            return self::getLocalizedUrl($page, null, $record);
-        }
+            if (isset($page)) {
+                return self::getLocalizedUrl($page, null, $record);
+            }
 
-        return null;
+            return null;
+        });
     }
 
     public static function getLocalizedUrl(Page $page, ?Locale $targetLocale = null, ?Model $record = null): string {
-        $defaultLocale = Locale::getDefault();
-        $currentLocale = PageController::currentLocale();
-        $targetLocale = $targetLocale ?? $currentLocale;
+        return once(function () use ($page, $targetLocale, $record) {
+            $defaultLocale = Locale::getDefault();
+            $currentLocale = PageController::currentLocale();
+            $targetLocale = $targetLocale ?? $currentLocale;
 
-        $path = $page->path;
-        if ($page->isTemplate()) {
-            if (isset($record)) {
-                // if record exists, replace placeholders in path with record attributes
-                $attributes = $record->toArray();
-                $path = trim(preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $path), '/');
-            } else {
-                // if record does not exist, use current request path
-                $path = request()->path();
-                if ($currentLocale && !$currentLocale->is($defaultLocale)) {
-                    $path = trim(preg_replace('/^\/' . preg_quote($currentLocale->hreflang, '/') . '\//', '/', $path), '/');
+            $path = $page->path;
+            if ($page->isTemplate()) {
+                if (isset($record)) {
+                    // if record exists, construct target url from page path template
+                    $attributes = $record->toArray();
+                    $path = preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $path);
+                } else {
+                    // if record does not exist, construct target url from current url
+                    $path = request()->path();
+                    if ($currentLocale && !$currentLocale->is($defaultLocale)) {
+                        // remove possible hreflang prefix
+                        $path = preg_replace('/^\/' . preg_quote($currentLocale->hreflang, '/') . '\//', '/', $path);
+                    }
                 }
             }
-        }
 
-        if ($targetLocale->is($defaultLocale)) {
-            return url($path);
-        } else {
-            return url($targetLocale->hreflang . '/' . $path);
-        }
+            if ($targetLocale->is($defaultLocale)) {
+                return url($path);
+            } else {
+                return url($targetLocale->hreflang . '/' . trim($path, '/'));
+            }
+        });
     }
 }

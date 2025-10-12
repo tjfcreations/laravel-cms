@@ -25,6 +25,8 @@ class Page extends Model implements TranslatableInterface {
 
     protected $guarded = [];
 
+    protected $cache = [];
+
     protected $casts = [
         'type' => PageTypeEnum::class,
         'status' => PageStatusEnum::class,
@@ -69,28 +71,39 @@ class Page extends Model implements TranslatableInterface {
      * Get the record that belongs to this template page.
      */
     public function getRecord(array $params): ?Model {
-        if (isset($this->model) && class_exists($this->model)) {
-            $record = $this->model::where($params)->first();
-            if ($record instanceof Model) {
-                return $record;
+        return once(function () use ($params) {
+            if (isset($this->model) && class_exists($this->model)) {
+                $record = $this->model::where($params)->first();
+                if ($record instanceof Model) {
+                    return $record;
+                }
             }
-        }
 
-        return null;
+            return null;
+        });
     }
 
     /**
      * Get the record for the current request that belongs to this template page.
      */
     public function getRequestRecord(): Model {
-        $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
-        $record = $this->getRecord($routeParams);
+        return once(function () {
+            $routeParams = collect(request()->route()->parameters())->only('slug', 'id')->toArray();
+            $record = $this->getRecord($routeParams);
 
-        if (!$record) {
-            throw new NotFoundHttpException();
-        }
+            if (!$record) {
+                throw new NotFoundHttpException();
+            }
 
-        return $record;
+            return $record;
+        });
+    }
+
+    /**
+     * Find a page by its slug.
+     */
+    public static function findBySlug(string $slug): ?Page {
+        return once(fn() => self::where('slug', $slug)->first());
     }
 
     public function localizedUrl(?Locale $targetLocale = null, ?Model $record = null): string {

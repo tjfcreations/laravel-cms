@@ -11,27 +11,27 @@ class Locale extends Model {
     protected $guarded = [];
 
     public static function allNotDefault($columns = ['*']) {
-        return parent::where('is_default', false)->get($columns);
+        return once(fn() => parent::where('is_default', false)->get($columns));
     }
 
     public static function allMachineTranslatable($columns = ['*']): Collection {
-        return parent::where('is_machine_translatable', true)->get($columns);
+        return once(fn() => parent::where('is_machine_translatable', true)->get($columns));
     }
 
     public static function allWithDefaultLast($columns = ['*']) {
-        return parent::all($columns)->sortBy('is_default');
+        return once(fn() => parent::all($columns)->sortBy('is_default'));
     }
 
     public static function allWithDefaultFirst($columns = ['*']) {
-        return parent::all($columns)->sortByDesc('is_default');
+        return once(fn() => parent::all($columns)->sortByDesc('is_default'));
     }
 
     public static function getDefault(): self {
-        return static::where('is_default', true)->first();
+        return once(fn() => static::where('is_default', true)->first());
     }
 
     public static function get(string $code): ?self {
-        return static::where('code', $code)->first();
+        return once(fn() => static::where('code', $code)->first());
     }
 
     public function isDefault(): bool {
@@ -45,5 +45,8 @@ class Locale extends Model {
     public function setAsDefault() {
         static::where('is_default', true)->update(['is_default' => false]);
         $this->update(['is_default' => true]);
+
+        // Clear the memoized result when default locale changes
+        static::$defaultLocale = null;
     }
 }
