@@ -63,8 +63,5 @@ class Locale extends Model {
     public function setAsDefault() {
         static::where('is_default', true)->update(['is_default' => false]);
         $this->update(['is_default' => true]);
-
-        // Clear the memoized result when default locale changes
-        static::$defaultLocale = null;
     }
 }
