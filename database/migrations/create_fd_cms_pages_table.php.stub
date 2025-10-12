@@ -10,9 +10,9 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name');
+            $table->string('slug')->nullable();
             $table->string('status');
             $table->string('path')->nullable();
-            $table->string('title')->nullable();
             $table->longText('pagebuilder');
             $table->string('model')->nullable();
             $table->string('type');

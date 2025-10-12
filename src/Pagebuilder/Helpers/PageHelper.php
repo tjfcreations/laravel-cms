@@ -17,6 +17,41 @@ class PageHelper {
         return app(PageHeader::class);
     }
 
+    public function url(mixed $slugOrObject, ?Model $record = null) {
+        $pageSlug = null;
+        $class = null;
+
+        // determine if input is a slug string, a class name, or a model instance
+        if (is_string($slugOrObject)) {
+            if (class_exists($slugOrObject)) {
+                $class = $slugOrObject;
+            } else {
+                $pageSlug = $slugOrObject;
+            }
+        } else if ($slugOrObject instanceof Model) {
+            $record = $slugOrObject;
+        }
+
+        // determine slug from class or record if not explicitly provided
+        if (empty($pageSlug)) {
+            if (isset($class)) {
+                $pageSlug = strtolower(class_basename($class)) . '.index';
+            } else if (isset($record)) {
+                $pageSlug = strtolower(class_basename($record)) . '.show';
+            }
+        }
+
+        if (isset($pageSlug)) {
+            $page = Page::where('slug', $pageSlug)->first();
+        }
+
+        if (isset($page)) {
+            return self::getLocalizedUrl($page, null, $record);
+        }
+
+        return null;
+    }
+
     public static function getLocalizedUrl(Page $page, ?Locale $targetLocale = null, ?Model $record = null): string {
         $defaultLocale = Locale::getDefault();
         $currentLocale = PageController::currentLocale();

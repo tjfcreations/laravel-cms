@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Feenstra\CMS\Pagebuilder\Registry;
+use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class PageResource extends Resource {
     protected static ?string $slug = 'fd-cms-pages';
@@ -72,7 +75,7 @@ class PageResource extends Resource {
                                     ->schema([
                                         Forms\Components\Grid::make(1)
                                             ->schema([
-                                                Forms\Components\TextInput::make('title')
+                                                Forms\Components\TextInput::make('options.header.title')
                                                     ->label('Titel')
                                                     ->maxLength(255),
                                                 Forms\Components\Textarea::make('options.header.subtitle')
@@ -89,6 +92,39 @@ class PageResource extends Resource {
                             ->label('Instellingen')
                             ->columns(2)
                             ->schema([
+                                Forms\Components\TextInput::make('slug')
+                                    ->label('Slug')
+                                    ->helperText('De slug wordt intern gebruikt om naar deze pagina te verwijzen.')
+                                    ->placeholder('Bijv. project.index, project.show, project.donate...')
+                                    ->maxLength(255)
+                                    ->dehydrateStateUsing(fn($state) => Str::snake(Str::lower($state)))
+                                    ->disabled(fn($livewire, $get) => self::isSlugInputDisabled($livewire, $get) && !$get('is_slug_editable'))
+                                    ->suffixAction(
+                                        Forms\Components\Actions\Action::make('edit_slug')
+                                            ->label('Bewerk')
+                                            ->icon('heroicon-s-pencil')
+                                            ->color('danger')
+                                            ->visible(fn($livewire, $get) => self::isSlugInputDisabled($livewire, $get))
+                                            ->requiresConfirmation()
+                                            ->modalHeading('Slug bewerken')
+                                            ->modalSubmitActionLabel('Ja, bewerken')
+                                            ->modalDescription('Weet je zeker dat je de slug wilt bewerken? Dit kan bestaande links naar deze pagina breken.')
+                                            ->action(function ($set) {
+                                                $set('is_slug_editable', true);
+                                            })
+                                    ),
+
+                                Forms\Components\Hidden::make('is_slug_editable')
+                                    ->dehydrated(false)
+                                    ->default(false),
+
+                                Forms\Components\ToggleButtons::make('status')
+                                    ->label('Status')
+                                    ->grouped()
+                                    ->options(PageStatusEnum::class)
+                                    ->default(PageStatusEnum::Published)
+                                    ->required(),
+
                                 Forms\Components\Select::make('type')
                                     ->label('Paginatype')
                                     ->options(PageTypeEnum::class)
@@ -123,16 +159,17 @@ class PageResource extends Resource {
                                     ->required()
                                     ->placeholder('Kies een foutcode...')
                                     ->visible(fn(Get $get) => self::isPageType(PageTypeEnum::Error, $get('type'))),
-                                Forms\Components\ToggleButtons::make('status')
-                                    ->label('Status')
-                                    ->grouped()
-                                    ->options(PageStatusEnum::class)
-                                    ->default(PageStatusEnum::Published)
-                                    ->required()
-                                    ->columnSpanFull(),
                             ]),
                     ]),
             ]);
+    }
+
+    protected static function isSlugInputDisabled($livewire, $get) {
+        if ($livewire instanceof EditRecord) {
+            return !empty($get('slug'));
+        }
+
+        return false;
     }
 
     public static function afterSave(Model $record): void {
@@ -164,7 +201,7 @@ class PageResource extends Resource {
             ->columns([
                 Columns\TextColumn::make('name')
                     ->label('Naam')
-                    ->description(fn(Page $page): string => $page->type !== PageTypeEnum::Default ? $page->type->getLabel() : '')
+                    ->description(fn(Page $page): string => $page->slug)
                     ->sortable()
                     ->searchable(),
                 Columns\TextColumn::make('path')
