@@ -9,12 +9,10 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Artisan;
 
-class EditPage extends EditRecord
-{
+class EditPage extends EditRecord {
     protected static string $resource = PageResource::class;
 
-    protected function getHeaderActions(): array
-    {
+    protected function getHeaderActions(): array {
         return [
             TranslateAction::make()
                 ->labels([
@@ -24,7 +22,21 @@ class EditPage extends EditRecord
         ];
     }
 
-    protected function afterSave() {
-        RecacheRoutes::dispatch();
+    protected function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model {
+        $originalPath = $record->getOriginal('path');
+
+        $record = parent::handleRecordUpdate($record, $data);
+
+        $currentPath = $record->path;
+
+        // Only clear routes if path has changed
+        if ($originalPath !== $currentPath) {
+            // clear routes immediately to make the new route available
+            Artisan::call('route:clear');
+
+            RecacheRoutes::dispatchAfterResponse();
+        }
+
+        return $record;
     }
 }
