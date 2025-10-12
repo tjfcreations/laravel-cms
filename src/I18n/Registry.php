@@ -24,7 +24,7 @@ class Registry {
     }
 
     public static function isEnabled() {
-        return !!config('fd-cms.i18n.enabled', true) && Locale::count() > 0;
+        return !!config('fd-cms.i18n.enabled', true);
     }
 
     public static function isDisabled() {

@@ -44,7 +44,7 @@ class TranslateAction extends Action {
             ->action(function (TranslatableInterface $record, array $data) {
                 $this->handleSave($record, $data);
             })
-            ->hidden(Registry::isDisabled());
+            ->visible(fn() => Registry::isEnabled() && Locale::count() > 0);
     }
 
     public static function getDefaultName(): ?string {
