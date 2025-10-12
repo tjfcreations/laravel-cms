@@ -68,7 +68,7 @@ class Page extends Model implements TranslatableInterface {
     }
 
     /**
-     * Get the record that belongs to this template page.
+     * Get the record that belongs to this template page (memoized).
      */
     public function getRecord(array $params): ?Model {
         return once(function () use ($params) {
@@ -84,7 +84,7 @@ class Page extends Model implements TranslatableInterface {
     }
 
     /**
-     * Get the record for the current request that belongs to this template page.
+     * Get the record for the current request that belongs to this template page (memoized).
      */
     public function getRequestRecord(): Model {
         return once(function () {
@@ -100,10 +100,17 @@ class Page extends Model implements TranslatableInterface {
     }
 
     /**
-     * Find a page by its slug.
+     * Find a page by its slug (memoized).
      */
     public static function findBySlug(string $slug): ?Page {
         return once(fn() => self::where('slug', $slug)->first());
+    }
+
+    /**
+     * Find a page by its ID (memoized).
+     */
+    public static function findById($id, $columns = ['*']) {
+        return once(fn() => self::findOrFail($id, $columns));
     }
 
     public function localizedUrl(?Locale $targetLocale = null, ?Model $record = null): string {
