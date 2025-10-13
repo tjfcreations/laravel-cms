@@ -26,7 +26,7 @@ class PageController {
         }
 
         if ($page->isDraft() && !Auth::user()) {
-            return abort(404);
+            return;
         }
 
         static::$currentPage = $page;

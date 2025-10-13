@@ -17,6 +17,7 @@ class Link extends Field {
     protected bool|Closure $isTelEnabled = false;
     protected bool|Closure $isExternalUrlEnabled = false;
     protected bool|Closure $isEmailEnabled = false;
+    protected bool|Closure $isWithoutLabel = false;
 
     protected function setUp(): void {
         parent::setUp();
@@ -30,7 +31,8 @@ class Link extends Field {
                         ->label('Label')
                         ->placeholder($this->getPlaceholder() ?? 'Nieuwe link')
                         ->required()
-                        ->live(),
+                        ->live()
+                        ->hidden($this->evaluate($this->isWithoutLabel)),
 
                     Forms\Components\Select::make('type')
                         ->label('Linktype')
@@ -38,10 +40,7 @@ class Link extends Field {
                         ->live()
                         ->default('page')
                         ->required()
-                        ->disabled(function () use ($typeOptions) {
-                            return count($typeOptions) <= 1;
-                        })
-                        ->selectablePlaceholder(true),
+                        ->selectablePlaceholder(false),
 
                     Forms\Components\Select::make('page_id')
                         ->label('Pagina')
@@ -159,6 +158,11 @@ class Link extends Field {
 
     public function email(bool|Closure $condition = true): self {
         $this->isEmailEnabled = $condition;
+        return $this;
+    }
+
+    public function withoutLabel(bool|Closure $condition = true): self {
+        $this->isWithoutLabel = $condition;
         return $this;
     }
 

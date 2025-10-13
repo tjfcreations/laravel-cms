@@ -25,6 +25,7 @@ use Feenstra\CMS\Pagebuilder\Registry;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PageResource extends Resource {
     protected static ?string $slug = 'fd-cms-pages';
@@ -46,6 +47,15 @@ class PageResource extends Resource {
                     ->label('Naam')
                     ->placeholder('Nieuwe pagina')
                     ->required()
+                    ->hintAction(
+                        Forms\Components\Actions\Action::make('view_page')
+                            ->label('Pagina bekijken')
+                            ->icon('heroicon-s-arrow-top-right-on-square')
+                            ->iconPosition('after')
+                            ->url(fn($record) => $record?->localizedUrl())
+                            ->openUrlInNewTab()
+                            ->visible(fn($livewire) => $livewire instanceof EditRecord)
+                    )
                     ->maxLength(255),
                 Forms\Components\TextInput::make('path')
                     ->helperText('Gebruik {slug} of {id} voor een template.')
@@ -164,16 +174,19 @@ class PageResource extends Resource {
             ]);
     }
 
+    public static function getEloquentQuery(): Builder {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+
     protected static function isSlugInputDisabled($livewire, $get) {
         if ($livewire instanceof EditRecord) {
             return !empty($get('slug'));
         }
 
         return false;
-    }
-
-    public static function afterSave(Model $record): void {
-        $record->updateRoute(true);
     }
 
     protected static function isPageType(PageTypeEnum $a, mixed $b): bool {
@@ -210,7 +223,7 @@ class PageResource extends Resource {
                     ->searchable()
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

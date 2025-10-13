@@ -16,6 +16,7 @@ trait Translatable {
         // update translations on save
         static::saved(function (TranslatableInterface $record) {
             $defaultLocale = Locale::getDefault();
+            if (!$defaultLocale) return;
 
             // update translations for default locale to match record values
             foreach ($record->getTranslatableAttributes() as $attribute) {

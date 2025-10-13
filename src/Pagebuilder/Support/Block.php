@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Blade;
 use Feenstra\CMS\Pagebuilder\Registry;
 use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
+use Filament\Forms\Form;
 
 abstract class Block {
     public static string $view;
@@ -25,6 +26,10 @@ abstract class Block {
 
     public function schema(): array {
         return [];
+    }
+
+    public function form(Form $form): Form {
+        return $form;
     }
 
     public function with(array $data): array {
@@ -65,6 +70,10 @@ abstract class Block {
 
     public function getType(): string {
         return Str::snake(class_basename(static::class));
+    }
+
+    public function getForm(Form $form): Form {
+        return $this->form($form);
     }
 
     public function getSchema(): array {

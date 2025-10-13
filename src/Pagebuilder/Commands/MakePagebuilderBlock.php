@@ -6,17 +6,15 @@ use Illuminate\Console\Command;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Support\Str;
 
-class MakePagebuilderBlock extends Command
-{
+class MakePagebuilderBlock extends Command {
     use CanManipulateFiles;
 
     protected $signature = 'make:pagebuilder-block {name}';
     protected $description = 'Create a new Pagebuilder block class and view';
 
-    public function handle()
-    {
+    public function handle() {
         $slug = Str::slug($this->argument('name'));
-        $class = Str::pascal($slug).'Block';
+        $class = Str::pascal($slug) . 'Block';
         $label = Str::ucfirst(Str::lower(Str::snake($slug, ' ')));
 
         $classPath = "app/Pagebuilder/Blocks/{$class}.php";
@@ -25,7 +23,7 @@ class MakePagebuilderBlock extends Command
 
         // Copy stub to app using Filament's method
         $this->copyStubToApp(
-            'PagebuilderBlock',
+            '../../stubs/pagebuilder/PagebuilderBlock',
             $classPath,
             [
                 'namespace' => $namespace,

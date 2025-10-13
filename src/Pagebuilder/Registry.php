@@ -6,11 +6,6 @@ use Feenstra\CMS\Pagebuilder\Support\Block;
 use Feenstra\CMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
-use ReflectionClass;
-use Throwable;
-use Composer\Autoload\ClassLoader;
 
 class Registry {
     public static function blocks(): Collection {

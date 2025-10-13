@@ -19,6 +19,8 @@ class EditPage extends EditRecord {
                     'title' => 'Titel'
                 ]),
             Actions\DeleteAction::make(),
+            Actions\ForceDeleteAction::make(),
+            Actions\RestoreAction::make(),
         ];
     }
 

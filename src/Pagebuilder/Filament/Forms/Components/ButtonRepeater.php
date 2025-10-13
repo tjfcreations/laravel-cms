@@ -20,7 +20,8 @@ class ButtonRepeater extends Repeater {
             ->extraItemActions([
                 $this->getItemEditAction(),
             ])
-            ->extraAttributes(['class' => 'fd-cms-repeater-no-content']);
+            ->extraAttributes(['class' => 'fd-cms-repeater-no-content'])
+            ->defaultItems(0);
     }
 
     public function getAddAction(): Action {
@@ -41,7 +42,7 @@ class ButtonRepeater extends Repeater {
 
     protected function getItemEditAction(): Action {
         return Action::make('edit')
-            ->label('Bewerk')
+            ->label('Knop bewerken')
             ->icon('heroicon-s-pencil-square')
             ->color('primary')
             ->modalSubmitActionLabel('Opslaan')

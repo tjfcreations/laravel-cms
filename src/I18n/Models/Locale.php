@@ -41,7 +41,7 @@ class Locale extends Model {
     /**
      * Get the default locale (memoized).
      */
-    public static function getDefault(): self {
+    public static function getDefault(): ?self {
         return once(fn() => static::where('is_default', true)->first());
     }
 

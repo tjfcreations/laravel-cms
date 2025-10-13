@@ -19,11 +19,13 @@ return new class extends Migration {
             $table->integer('error_code')->nullable();
             $table->longText('options');
 
+            $table->index('slug');
             $table->index('path');
             $table->index('error_code');
             $table->index('model');
             $table->index('type');
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -1,0 +1,29 @@
+<?php
+namespace {{ namespace }};
+
+use Feenstra\CMS\Pagebuilder\Support\Block;
+use Feenstra\CMS\Pagebuilder\Support\QuickSelect;
+
+class {{ class }} extends Block {
+    public static string $view = '{{ view }}';
+
+    public static string $label = '{{ label }}';
+
+    public function quickSelect(): ?QuickSelect {
+        return null;
+        // return QuickSelect::for(MyModel::class)
+        //     ->label('items')
+        //     ->recordLabel('name')
+        //     ->withRecent('created_at');
+    }
+
+    public function schema(): array {
+        return [
+
+        ];
+    }
+
+    public function with(array $data): array {
+        return $data;
+    }
+}

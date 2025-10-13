@@ -13,9 +13,10 @@ use Feenstra\CMS\Pagebuilder\Support\PageRenderer;
 use Feenstra\CMS\Pagebuilder\Helpers\PageHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Page extends Model implements TranslatableInterface {
-    use Translatable;
+    use Translatable, SoftDeletes;
 
     public PageRenderer $renderer;
 

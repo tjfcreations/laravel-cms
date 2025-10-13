@@ -15,6 +15,10 @@ return new class extends Migration {
             $table->string('name');
             $table->string('location');
             $table->longText('items')->nullable();
+
+            $table->index('name');
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }
