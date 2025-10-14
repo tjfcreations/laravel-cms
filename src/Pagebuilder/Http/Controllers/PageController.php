@@ -11,7 +11,7 @@ class PageController {
     protected static Locale $currentLocale;
 
     public function show(?Page $page = null) {
-        $hreflang = request()->route('locale');
+        $hreflang = request()->route('hreflang');
         if (!empty($hreflang)) {
             $locale = Locale::where('hreflang', $hreflang)->first();
 
