@@ -32,6 +32,9 @@ class RouteServiceProvider extends ServiceProvider {
 
                 foreach (Page::all() as $page) {
                     foreach (Page::all() as $page) {
+                        // don't register routes for error pages
+                        if ($page->isErrorPage()) continue;
+
                         // register a normal get-route
                         Route::get($page->path, [PageController::class, 'show'])
                             ->defaults('pageId', $page->id);
