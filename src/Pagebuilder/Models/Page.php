@@ -55,6 +55,20 @@ class Page extends Model implements TranslatableInterface {
     }
 
     /**
+     * Check if this page is an error page.
+     */
+    public function isErrorPage() {
+        return $this->type === PageTypeEnum::Error;
+    }
+
+    /**
+     * Check if this page is a generic page.
+     */
+    public function isGenericPage() {
+        return $this->type === PageTypeEnum::Generic;
+    }
+
+    /**
      * Check if this page is a draft page (opposite of published).
      */
     public function isDraft() {

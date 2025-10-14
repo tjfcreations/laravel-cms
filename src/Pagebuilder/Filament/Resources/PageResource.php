@@ -139,7 +139,7 @@ class PageResource extends Resource {
                                     ->label('Paginatype')
                                     ->options(PageTypeEnum::class)
                                     ->native(false)
-                                    ->default(PageTypeEnum::Default)
+                                    ->default(PageTypeEnum::Generic)
                                     ->live()
                                     ->required()
                                     ->selectablePlaceholder(false),
