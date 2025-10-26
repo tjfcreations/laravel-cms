@@ -2,6 +2,7 @@
 
 namespace Feenstra\CMS;
 
+use Feenstra\CMS\Commands\SetupCommand;
 use Feenstra\CMS\Media\Commands\RegenerateMediaCommand;
 use Feenstra\CMS\Media\MediaServiceProvider;
 use Spatie\LaravelPackageTools\Package;
@@ -11,6 +12,7 @@ use Feenstra\CMS\Pagebuilder\Commands\MakePagebuilderShortcode;
 use Feenstra\CMS\Pagebuilder\PagebuilderServiceProvider;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Feenstra\CMS\Exceptions\Handler;
+use Feenstra\CMS\Common\CommonServiceProvider;
 
 class CMSServiceProvider extends PackageServiceProvider {
     public function configurePackage(Package $package): void {
@@ -21,6 +23,8 @@ class CMSServiceProvider extends PackageServiceProvider {
             ->hasViews('fd-cms')
             ->hasConfigFile('fd-cms')
             ->hasCommands([
+                SetupCommand::class,
+
                 // media
                 RegenerateMediaCommand::class,
 
@@ -33,6 +37,7 @@ class CMSServiceProvider extends PackageServiceProvider {
     public function bootingPackage() {
         $this->app->register(MediaServiceProvider::class);
         $this->app->register(PagebuilderServiceProvider::class);
+        $this->app->register(CommonServiceProvider::class);
 
         $this->app->singleton(ExceptionHandler::class, Handler::class);
 

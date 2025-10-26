@@ -8,12 +8,6 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
 class PagebuilderServiceProvider extends ServiceProvider {
-    public function bootingPackage() {
-        $this->publishes([
-            __DIR__ . '/Filament/Resources' => app_path('Filament/Resources'),
-        ], 'filament-resources');
-    }
-
     public function boot(): void {
         // register SetLocale middleware
         $router = $this->app->make(Router::class);

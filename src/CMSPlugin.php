@@ -6,6 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 class CMSPlugin implements Plugin {
     public function getId(): string {
@@ -14,6 +15,10 @@ class CMSPlugin implements Plugin {
 
     public function register(Panel $panel): void {
         $panel
+            // ->plugin(new FilamentShieldPlugin())
+            ->pages([
+                Common\Filament\Pages\LogViewer::class,
+            ])
             ->resources([
                 I18n\Filament\Resources\LocaleResource::class,
                 I18n\Filament\Resources\TranslationResource::class,

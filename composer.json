@@ -21,7 +21,9 @@
         "thunderer/shortcode": "^0.7.6",
         "filament/actions": "^3.3",
         "google/cloud-translate": "^2.1",
-        "biostate/filament-menu-builder": "^1.0"
+        "biostate/filament-menu-builder": "^1.0",
+        "spatie/laravel-permission": "^6.21",
+        "bezhansalleh/filament-shield": "^3.9"
     },
     "extra": {
         "laravel": {
