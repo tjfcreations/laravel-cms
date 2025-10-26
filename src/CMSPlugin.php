@@ -6,7 +6,7 @@ use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+// use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 
 class CMSPlugin implements Plugin {
     public function getId(): string {
