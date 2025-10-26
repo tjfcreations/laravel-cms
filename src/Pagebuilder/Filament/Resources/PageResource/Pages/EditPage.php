@@ -33,9 +33,6 @@ class EditPage extends EditRecord {
 
         // Only clear routes if path has changed
         if ($originalPath !== $currentPath) {
-            // clear routes immediately to make the new route available
-            Artisan::call('route:clear');
-
             RecacheRoutes::dispatchAfterResponse();
         }
 

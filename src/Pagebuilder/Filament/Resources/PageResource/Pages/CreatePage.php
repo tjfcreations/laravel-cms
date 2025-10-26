@@ -11,9 +11,6 @@ class CreatePage extends CreateRecord {
     protected static string $resource = PageResource::class;
 
     protected function afterCreate() {
-        // clear routes immediately to make the new route available
-        Artisan::call('route:clear');
-
         RecacheRoutes::dispatchAfterResponse();
     }
 }
