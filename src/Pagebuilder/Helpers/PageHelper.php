@@ -61,19 +61,14 @@ class PageHelper {
             $targetLocale = $targetLocale ?? $currentLocale;
 
             $path = $page->path;
-            if ($page->isTemplate()) {
-                if (isset($record)) {
-                    // if record exists, construct target url from page path template
-                    $attributes = $record->toArray();
-                    $path = preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $path);
-                } else {
-                    // if record does not exist, construct target url from current url
-                    $path = request()->path();
-                    if ($currentLocale && !$currentLocale->is($defaultLocale)) {
-                        // remove possible hreflang prefix
-                        $path = preg_replace('/^\/' . preg_quote($currentLocale->hreflang, '/') . '\//', '/', $path);
-                    }
-                }
+            if ($page->isTemplate() && isset($record)) {
+                // if record exists, construct target url from page path template
+                $attributes = $record->toArray();
+                $path = preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $path);
+            } else if ($page->isTemplate() || $page->isErrorPage()) {
+                // construct target url from current url
+                $path = '/' . trim(request()->path(), '/');
+                $path = preg_replace('/^\/' . preg_quote($currentLocale->hreflang, '/') . '\//', '/', $path);
             }
 
             if ($targetLocale->is($defaultLocale)) {
