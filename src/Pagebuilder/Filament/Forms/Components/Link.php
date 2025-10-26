@@ -61,7 +61,7 @@ class Link extends Field {
                             return 'Kies een ' . ($instance->getTemplatableLabel() ?? 'record');
                         })
                         ->required()
-                        ->options(function (Forms\Get $get, Page $record) {
+                        ->options(function (Forms\Get $get, mixed $record) {
                             $pageId = $get('page_id');
                             if (!$pageId) return [];
 
