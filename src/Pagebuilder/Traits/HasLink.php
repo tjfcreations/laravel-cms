@@ -2,7 +2,7 @@
 
 namespace Feenstra\CMS\Pagebuilder\Traits;
 
-use Feenstra\Cms\Pagebuilder\Support\Link;
+use Feenstra\CMS\Pagebuilder\Support\Link;
 
 trait HasLink {
     protected Link $link;
