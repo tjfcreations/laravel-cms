@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\ComponentAttributeBag;
 use Feenstra\CMS\Pagebuilder\Models\Menu;
-use Feenstra\Cms\Pagebuilder\Support\Link;
+use Feenstra\CMS\Pagebuilder\Support\Link;
 use Feenstra\CMS\Pagebuilder\Traits\HasLink;
 use Illuminate\Database\Eloquent\Model;
 

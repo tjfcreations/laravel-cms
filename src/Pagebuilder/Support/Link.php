@@ -1,6 +1,6 @@
 <?php
 
-namespace Feenstra\Cms\Pagebuilder\Support;
+namespace Feenstra\CMS\Pagebuilder\Support;
 
 use Feenstra\CMS\Pagebuilder\Models\Page;
 

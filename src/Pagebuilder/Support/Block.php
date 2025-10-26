@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Blade;
 use Feenstra\CMS\Pagebuilder\Registry;
 use Feenstra\CMS\Pagebuilder\Shortcodes\ShortcodeProcessor;
-use Feenstra\Cms\Pagebuilder\Support\Link;
+use Feenstra\CMS\Pagebuilder\Support\Link;
 use Filament\Forms\Form;
 
 abstract class Block {
