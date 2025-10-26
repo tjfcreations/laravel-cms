@@ -17,7 +17,16 @@ class PageController {
     protected static Locale $currentLocale;
 
     public function show(?Page $page = null) {
-        $hreflang = request()->route('hreflang');
+        $hreflang = null;
+        if (request()->route()->hasParameter('hreflang')) {
+            $hreflang = request()->route('hreflang');
+        } else {
+            $segment = strtolower(request()->segment(1));
+            if (in_array($segment, RouteServiceProvider::getHrefLangs())) {
+                $hreflang = $segment;
+            }
+        }
+
         if (!empty($hreflang)) {
             $locale = Locale::where('hreflang', $hreflang)->first();
 
@@ -27,7 +36,7 @@ class PageController {
         }
 
         if (!$page) {
-            $pageId = request()->route('pageId');
+            $pageId = request()->route('_pageId');
             $page = Page::findOrFail($pageId) ?? Page::make();
         }
 
@@ -72,7 +81,7 @@ class PageController {
             $match = $matcher->match($path);
             $route = $routes[$match['_route']];
 
-            $page = Page::find(intval($route->defaults['pageId']));
+            $page = Page::find(intval($route->defaults['_pageId']));
             if (!$page) return;
 
             $route = request()->route();
@@ -80,7 +89,7 @@ class PageController {
                 $route->setParameter($key, $value);
             }
 
-            Log::debug('Succesfully matched uncached page', ['path' => $path, 'pageId' => $page->id]);
+            Log::debug('Succesfully matched uncached page', ['path' => $path, '_pageId' => $page->id]);
 
             return $this->show($page);
         } catch (\Exception $e) {

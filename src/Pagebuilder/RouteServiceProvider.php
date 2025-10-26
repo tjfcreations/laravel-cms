@@ -42,7 +42,7 @@ class RouteServiceProvider extends ServiceProvider {
 
     public static function registerPageRoute(Page $page, $action, ?callable $modifier = null): void {
         static::registerRoute($page->path, $action, function ($route) use ($page, $modifier) {
-            $route->defaults('pageId', $page->id);
+            $route->defaults('_pageId', $page->id);
             if (is_callable($modifier)) {
                 $modifier($route);
             }
@@ -70,11 +70,11 @@ class RouteServiceProvider extends ServiceProvider {
         }
     }
 
-    protected static function getHrefLangs() {
+    public static function getHrefLangs() {
         return once(fn() => Locale::pluck('hreflang')->toArray());
     }
 
-    protected static function getHrefLangPattern(): string {
+    public static function getHrefLangPattern(): string {
         return once(fn() => implode('|', static::getHrefLangs()));
     }
 }
