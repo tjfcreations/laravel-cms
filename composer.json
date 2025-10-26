@@ -23,7 +23,8 @@
         "google/cloud-translate": "^2.1",
         "biostate/filament-menu-builder": "^1.0",
         "spatie/laravel-permission": "^6.21",
-        "bezhansalleh/filament-shield": "^3.9"
+        "bezhansalleh/filament-shield": "^3.9",
+        "opcodesio/log-viewer": "^3.21"
     },
     "extra": {
         "laravel": {

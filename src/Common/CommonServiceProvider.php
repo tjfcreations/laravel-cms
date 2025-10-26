@@ -4,7 +4,8 @@ namespace Feenstra\CMS\Common;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
-use Feenstra\CMS\Common\Filament\Pages\LogViewer;
+use Opcodes\LogViewer\Facades\LogViewer;
+use Filament\Facades\Filament;
 
 class CommonServiceProvider extends ServiceProvider {
     public function boot(): void {
@@ -20,7 +21,8 @@ class CommonServiceProvider extends ServiceProvider {
 
     protected function setupLogViewerAuth(): void {
         LogViewer::auth(function ($request) {
-            return $request->user() && $request->user()->canAccessPanel();
+            $panel = Filament::getPanel('admin');
+            return $request->user() && $request->user()->canAccessPanel($panel);
         });
     }
 }
