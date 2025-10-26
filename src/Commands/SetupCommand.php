@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Spatie\Permission\PermissionServiceProvider;
 
 class SetupCommand extends Command {
-    protected $signature = 'fd-cms:setup';
+    protected $signature = 'cms:setup';
     protected $description = 'Setup common package';
 
     public function handle(): int {
