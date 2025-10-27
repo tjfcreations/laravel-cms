@@ -5,6 +5,8 @@ namespace Feenstra\CMS\Pagebuilder\Shortcodes;
 use Feenstra\CMS\Pagebuilder\Shortcodes\Shortcode;
 use Illuminate\Support\Collection;
 use Feenstra\CMS\I18n\Models\Translation;
+use Feenstra\CMS\Pagebuilder\Http\Controllers\PageController;
+use Feenstra\CMS\I18n\Models\Locale;
 
 class TranslateShortcode extends Shortcode {
     public static string $name = 'translate';
@@ -29,14 +31,19 @@ class TranslateShortcode extends Shortcode {
             $translationSources->push($data['page']->record->unwrap());
         }
 
-        foreach ($translationSources as $record) {
-            $translation = Translation::get($key, $record, 'custom');
-            if ($translation->has()) return $translation->translate();
-        }
+        $targetLocales = [PageController::currentLocale(), Locale::getDefault()];
+        foreach ($targetLocales as $locale) {
+            if (!$locale) continue;
 
-        // look in global translations
-        $translation = Translation::get($key);
-        if ($translation->has()) return $translation->translate();
+            foreach ($translationSources as $record) {
+                $translation = Translation::get($key, $record, 'custom');
+                if ($translation->has($locale->code)) return $translation->translate($locale->code);
+            }
+
+            // look in global translations
+            $translation = Translation::get($key);
+            if ($translation->has($locale->code)) return $translation->translate($locale->code);
+        }
 
         return null;
     }
