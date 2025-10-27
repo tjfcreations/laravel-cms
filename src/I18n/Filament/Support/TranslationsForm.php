@@ -11,11 +11,28 @@ use Filament\Forms\Set;
 use Illuminate\Support\Collection;
 
 class TranslationsForm {
+    public static function mutateFormComponent(Locale $locale, Component $component, ?Translation $translation = null): void {
+        // show whether the value is machine generated
+        if ($translation) {
+            $formattedDate = $translation->updatedAt($locale->code)->format('d-m-Y \o\m H:i.');
+
+            if ($translation->isMachineTranslation($locale->code)) {
+                $component
+                    ->hintIcon('heroicon-s-bolt', tooltip: 'Automatisch vertaald op ' . $formattedDate)
+                    ->hintColor(Color::Purple);
+            } elseif ($translation->isUserTranslation($locale->code)) {
+                $component
+                    ->hintIcon('heroicon-s-clock', tooltip: 'Handmatig aangepast op ' . $formattedDate);
+            }
+        }
+    }
+
+
     public static function makeValueInput(Locale $locale, string $name, bool $isRich = false, ?Translation $translation = null) {
         if ($isRich) {
-            $input = Forms\Components\RichEditor::make($name);
+            $component = Forms\Components\RichEditor::make($name);
         } else {
-            $input = Forms\Components\TextInput::make($name)
+            $component = Forms\Components\TextInput::make($name)
                 ->suffixAction(
                     Forms\Components\Actions\Action::make('reset')
                         ->icon('heroicon-m-trash')
@@ -26,21 +43,9 @@ class TranslationsForm {
                 );
         }
 
-        // show whether the value is machine generated
-        if ($translation) {
-            $formattedDate = $translation->updatedAt($locale->code)->format('d-m-Y \o\m H:i.');
+        static::mutateFormComponent($locale, $component, $translation);
 
-            if ($translation->isMachineTranslation($locale->code)) {
-                $input
-                    ->hintIcon('heroicon-s-bolt', tooltip: 'Automatisch vertaald op ' . $formattedDate)
-                    ->hintColor(Color::Purple);
-            } elseif ($translation->isUserTranslation($locale->code)) {
-                $input
-                    ->hintIcon('heroicon-s-clock', tooltip: 'Handmatig aangepast op ' . $formattedDate);
-            }
-        }
-
-        return $input;
+        return $component;
     }
 
     public static function makeTabs(callable $makeTab, Collection $locales) {

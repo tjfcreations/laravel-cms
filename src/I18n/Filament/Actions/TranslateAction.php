@@ -160,15 +160,21 @@ class TranslateAction extends Action {
         return $translatableComponents;
     }
 
-    protected function mutateFormComponents(Locale $locale, array $components, int $level = 0) {
-        foreach ($components as $index => $component) {
+    protected function mutateFormComponents(Locale $locale, array $components) {
+        foreach ($components as $component) {
+            // mutate child components
             if ($component->getChildComponents()) {
-                $this->mutateFormComponents($locale, $component->getChildComponents(), $level + 1);
+                $this->mutateFormComponents($locale, $component->getChildComponents());
             }
 
+            // add locale name suffix
             if ($component->getLabel()) {
                 $component->label($component->getLabel() . " ({$locale->name})");
             }
+
+            // add hint with translation information
+            $translation = Translation::get($component->getName(), $this->getRecord());
+            TranslationsForm::mutateFormComponent($locale, $component, $translation);
 
             $component
                 ->required(false)
@@ -190,21 +196,5 @@ class TranslateAction extends Action {
                 'heroicon-m-question-mark-circle',
                 tooltip: str('Met lokale vertalingen kun je delen van de pagina-inhoud vertalen. Gebruik [translate vertaalsleutel] in de pagina-inhoud om een lokale vertaling te tonen.')
             );
-    }
-
-    protected function makeValueInputs(Locale $locale, TranslatableInterface $record): array {
-        if ($locale->isDefault()) return [];
-
-        $translatableAttributes = $record->getTranslatableAttributes();
-
-        return collect($translatableAttributes)->map(function ($attribute) use ($locale, $record) {
-            $translation = Translation::get($attribute, $record);
-            $label = $this->labels[$attribute] ?? Str::ucfirst($attribute);
-
-            $input = TranslationsForm::makeValueInput($locale, "ungrouped.{$locale->code}.{$attribute}", $this->isRichAttribute($attribute), $translation)
-                ->label("{$label} ({$locale->name})");
-
-            return $input;
-        })->toArray();
     }
 }
