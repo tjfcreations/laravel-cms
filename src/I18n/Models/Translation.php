@@ -269,7 +269,8 @@ class Translation extends Model {
                 ->setContents([$escapedSourceValue])
                 ->setSourceLanguageCode($sourceLocale->code)
                 ->setTargetLanguageCode($targetLocale->code)
-                ->setParent($formattedParent);
+                ->setParent($formattedParent)
+                ->setMimeType('text/html');
 
             $response = $client->translateText($request);
             $escapedTargetValue = @$response->getTranslations()[0]->getTranslatedText();
