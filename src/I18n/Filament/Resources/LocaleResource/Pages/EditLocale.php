@@ -29,7 +29,7 @@ class EditLocale extends EditRecord {
         UpdateAllMachineTranslations::dispatch();
 
         // hreflang may have changed
-        RecacheRoutes::dispatchAfterResponse();
+        RecacheRoutes::dispatch();
 
         return $record;
     }

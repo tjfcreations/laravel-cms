@@ -33,7 +33,7 @@ class EditPage extends EditRecord {
 
         // Only clear routes if path has changed
         if ($originalPath !== $currentPath) {
-            RecacheRoutes::dispatchAfterResponse();
+            RecacheRoutes::dispatch();
         }
 
         return $record;

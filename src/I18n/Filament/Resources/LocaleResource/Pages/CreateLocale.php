@@ -23,7 +23,7 @@ class CreateLocale extends CreateRecord {
         UpdateAllMachineTranslations::dispatch();
 
         // recache because of new hreflang
-        RecacheRoutes::dispatchAfterResponse();
+        RecacheRoutes::dispatch();
 
         return $record;
     }

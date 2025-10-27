@@ -195,7 +195,7 @@ class Translation extends Model {
     public function updateMachineTranslationsAsync(): self {
         dispatch(function () {
             $this->updateMachineTranslations();
-        })->afterResponse();
+        });
 
         return $this;
     }

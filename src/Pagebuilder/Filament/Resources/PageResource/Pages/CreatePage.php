@@ -11,6 +11,6 @@ class CreatePage extends CreateRecord {
     protected static string $resource = PageResource::class;
 
     protected function afterCreate() {
-        RecacheRoutes::dispatchAfterResponse();
+        RecacheRoutes::dispatch();
     }
 }
