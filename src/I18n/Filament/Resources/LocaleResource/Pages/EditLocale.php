@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Feenstra\CMS\Pagebuilder\Jobs\RecacheRoutes;
+use Feenstra\CMS\Pagebuilder\Jobs\UpdateAllMachineTranslations;
 
 class EditLocale extends EditRecord {
     protected static string $resource = LocaleResource::class;
@@ -23,6 +24,9 @@ class EditLocale extends EditRecord {
         if ($record->is_default) {
             $record->setAsDefault();
         }
+
+        // update all missing or outdated machine translations
+        UpdateAllMachineTranslations::dispatch();
 
         // hreflang may have changed
         RecacheRoutes::dispatchAfterResponse();
