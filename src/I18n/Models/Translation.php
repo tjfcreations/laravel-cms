@@ -282,6 +282,8 @@ class Translation extends Model {
             }
         }
 
+        Log::debug("Successfully generated machine translations for '{$this->key}' [Translation {$this->id}]", $translations);
+
         return $translations;
     }
 
