@@ -64,4 +64,12 @@ class Locale extends Model {
         static::where('is_default', true)->update(['is_default' => false]);
         $this->update(['is_default' => true]);
     }
+
+    public function name() {
+        return $this->name;
+    }
+
+    public function localizedName() {
+        return $this->localized_name;
+    }
 }
