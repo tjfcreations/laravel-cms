@@ -34,13 +34,18 @@ class TranslateAction extends Action {
             ->label('Vertalen')
             ->icon('heroicon-m-chat-bubble-left-right')
             ->color(Color::Emerald)
-            ->form(function () {
-                return [TranslationsForm::makeTabs([$this, 'makeTab'], Locale::allWithDefaultLast())];
+            ->form(function (Form $form) {
+                return $form->schema([
+                    TranslationsForm::makeTabs(function (Locale $locale) use ($form) {
+                        return $this->makeTab($locale, $form);
+                    }, Locale::allWithDefaultLast())
+                ]);
             })
             ->fillForm(function (TranslatableInterface $record) {
                 return $this->getData($record);
             })
             ->modalSubmitActionLabel('Opslaan')
+            ->modalWidth('7xl')
             ->action(function (TranslatableInterface $record, array $data) {
                 $this->handleSave($record, $data);
             })
@@ -96,11 +101,11 @@ class TranslateAction extends Action {
         return $data;
     }
 
-    public function makeTab(Locale $locale) {
+    public function makeTab(Locale $locale, Form $form) {
         return Tabs\Tab::make($locale->name)
-            ->schema(function (TranslatableInterface $record) use ($locale) {
+            ->schema(function (TranslatableInterface $record) use ($locale, $form) {
                 return [
-                    ...$this->makeValueInputs($locale, $record),
+                    ...$this->makeFormComponents($locale, $form),
                     $this->makeCustomKeyValueEditor($locale)
                 ];
             });
@@ -135,6 +140,40 @@ class TranslateAction extends Action {
 
         foreach ($updatedTranslations as $translation) {
             $translation->updateMachineTranslationsAsync();
+        }
+    }
+
+    protected function makeFormComponents(Locale $locale, Form $form) {
+        if ($locale->isDefault()) return [];
+
+        $form = new Form($this->getLivewire());
+        $components = $this->getLivewire()::getResource()::form($form)->getComponents();
+
+        // filter only translatable components
+        $translatableAttributes = $this->getRecord()->getTranslatableAttributes();
+        $translatableComponents = collect($components)->filter(function (Component $component) use ($translatableAttributes) {
+            return method_exists($component, 'getName') && in_array($component->getName(), $translatableAttributes);
+        })->toArray();
+
+        $this->mutateFormComponents($locale, $translatableComponents);
+
+        return $translatableComponents;
+    }
+
+    protected function mutateFormComponents(Locale $locale, array $components, int $level = 0) {
+        foreach ($components as $index => $component) {
+            if ($component->getChildComponents()) {
+                $this->mutateFormComponents($locale, $component->getChildComponents(), $level + 1);
+            }
+
+            if ($component->getLabel()) {
+                $component->label($component->getLabel() . " ({$locale->name})");
+            }
+
+            $component
+                ->required(false)
+                ->name("ungrouped.{$locale->code}.{$component->getName()}")
+                ->statePath($component->getName()); // regenerate state path
         }
     }
 

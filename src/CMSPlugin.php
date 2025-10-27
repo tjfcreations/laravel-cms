@@ -2,6 +2,7 @@
 
 namespace Feenstra\CMS;
 
+use Feenstra\CMS\I18n\Registry as I18nRegistry;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentView;
