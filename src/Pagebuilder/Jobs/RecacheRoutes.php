@@ -14,7 +14,8 @@ class RecacheRoutes implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle(): void {
+        Log::debug('Recaching routes...');
         Artisan::call('route:cache');
-        Log::debug('Route cache updated succesfully.');
+        Log::info('Successfully recached routes.');
     }
 }
