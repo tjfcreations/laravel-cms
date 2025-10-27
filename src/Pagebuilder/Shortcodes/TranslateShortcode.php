@@ -31,20 +31,14 @@ class TranslateShortcode extends Shortcode {
             $translationSources->push($data['page']->record->unwrap());
         }
 
-        $targetLocales = [PageController::currentLocale(), Locale::getDefault()];
-        foreach ($targetLocales as $locale) {
-            if (!$locale) continue;
-
-            foreach ($translationSources as $record) {
-                $translation = Translation::get($key, $record, 'custom');
-                if ($translation->has($locale->code)) return $translation->translate($locale->code);
-            }
-
-            // look in global translations
-            $translation = Translation::get($key);
-            if ($translation->has($locale->code)) return $translation->translate($locale->code);
+        foreach ($translationSources as $record) {
+            $translation = Translation::get($key, $record, 'custom');
+            if ($translation->exists()) return $translation->translate();
         }
 
+        // look in global translations
+        $translation = Translation::get($key);
+        if ($translation->exists()) return $translation->translate();
         return null;
     }
 }
