@@ -32,6 +32,7 @@ class PageController {
 
             if ($locale) {
                 static::$currentLocale = $locale;
+                app()->setLocale($locale->code);
             }
         }
 
