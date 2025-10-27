@@ -67,12 +67,12 @@ class PageHelper {
                 $path = preg_replace_callback('/\{(\w+)\}/', fn($m) => $attributes[$m[1]] ?? $m[0], $path);
             } else if ($page->isTemplate() || $page->isErrorPage()) {
                 // construct target url from current url
-                $path = '/' . trim(request()->path(), '/');
+                $path = '/' . trim(request()->path(), '/') . '/';
                 $path = preg_replace('/^\/' . preg_quote($currentLocale->hreflang, '/') . '\//', '/', $path);
             }
 
             if ($targetLocale->is($defaultLocale)) {
-                return url($path);
+                return url('/' . trim($path, '/'));
             } else {
                 return url($targetLocale->hreflang . '/' . trim($path, '/'));
             }
