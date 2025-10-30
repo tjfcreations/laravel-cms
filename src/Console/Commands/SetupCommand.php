@@ -1,6 +1,6 @@
 <?php
 
-namespace Feenstra\CMS\Commands;
+namespace Feenstra\CMS\Console\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\Permission\PermissionServiceProvider;

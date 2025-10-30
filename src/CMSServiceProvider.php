@@ -2,7 +2,7 @@
 
 namespace Feenstra\CMS;
 
-use Feenstra\CMS\Commands\SetupCommand;
+use Feenstra\CMS\Console\Commands\SetupCommand;
 use Feenstra\CMS\Media\Commands\RegenerateMediaCommand;
 use Feenstra\CMS\Media\MediaServiceProvider;
 use Spatie\LaravelPackageTools\Package;
