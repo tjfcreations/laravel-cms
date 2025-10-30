@@ -33,12 +33,16 @@ class TranslateShortcode extends Shortcode {
 
         foreach ($translationSources as $record) {
             $translation = Translation::get($key, $record, 'custom');
-            if ($translation->exists()) return $translation->translate();
+            if ($translation->exists) return $translation->translate();
+
+            $translation = Translation::get($key, $record);
+            if ($translation->exists) return $translation->translate();
         }
 
         // look in global translations
         $translation = Translation::get($key);
-        if ($translation->exists()) return $translation->translate();
-        return null;
+        if ($translation->exists) return $translation->translate();
+
+        return $key;
     }
 }

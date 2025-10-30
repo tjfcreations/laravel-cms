@@ -299,8 +299,6 @@ class Translation extends Model {
             ->where(['key' => $key, 'group' => $group])
             ->first();
 
-        // dd($key, $translation);
-
         if (!$translation) {
             $translation = new Translation();
             $translation->key = $key;
