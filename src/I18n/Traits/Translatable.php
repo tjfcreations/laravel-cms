@@ -8,6 +8,7 @@ use Feenstra\CMS\I18n\Models\Translation;
 use Illuminate\Support\Collection;
 use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Registry;
+use Illuminate\Database\Eloquent\Builder;
 
 trait Translatable {
     public static function bootTranslatable() {

@@ -325,7 +325,7 @@ class Translation extends Model {
         return true;
     }
 
-    protected static function getTranslations(?TranslatableInterface $record = null): MorphMany|Builder {
-        return isset($record) ? $record->translations() : Translation::query();
+    protected static function getTranslations(?TranslatableInterface $record = null): Collection|Builder {
+        return isset($record) ? $record->translations : Translation::query();
     }
 }
