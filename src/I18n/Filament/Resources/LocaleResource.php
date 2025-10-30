@@ -39,7 +39,7 @@ class LocaleResource extends Resource {
                     ->placeholder('English')
                     ->required(),
                 Forms\Components\TextInput::make('code')
-                    ->label('Taalcode (ISO 639-1)')
+                    ->label('Taalcode')
                     ->placeholder('nl_NL, en_GB, de_DE, nl_BE...')
                     ->unique(ignoreRecord: true)
                     ->helperText('Deze taalcode wordt gebruikt voor automatische vertalingen.')
