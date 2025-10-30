@@ -6,6 +6,7 @@ use Feenstra\CMS\I18n\Filament\Resources\LocaleResource\Pages;
 use Feenstra\CMS\I18n\Models\Locale;
 use Feenstra\CMS\I18n\Registry;
 use Filament\Forms;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -37,6 +38,23 @@ class LocaleResource extends Resource {
                     ->helperText('Deze naam wordt getoond op de website zelf.')
                     ->placeholder('English')
                     ->required(),
+                Forms\Components\TextInput::make('code')
+                    ->label('Taalcode (ISO 639-1)')
+                    ->placeholder('nl_NL, en_GB, de_DE, nl_BE...')
+                    ->unique(ignoreRecord: true)
+                    ->helperText('Deze taalcode wordt gebruikt voor automatische vertalingen.')
+                    ->hintAction(Actions\Action::make('open_docs')
+                        ->label('Bekijk taalcodes')
+                        ->icon('heroicon-s-arrow-top-right-on-square')
+                        ->url('https://docs.cloud.google.com/translate/docs/languages')
+                        ->openUrlInNewTab())
+                    ->required(),
+                Forms\Components\TextInput::make('hreflang')
+                    ->label('Hreflang')
+                    ->placeholder('nl, en, de, nl-be...')
+                    ->unique(ignoreRecord: true)
+                    ->helperText('De hreflang wordt gebruikt als voorvoegsel in de URL.')
+                    ->required(),
                 Forms\Components\FileUpload::make('flag_path')
                     ->directory('uploads/locale-flags')
                     ->label('Vlag')
@@ -44,34 +62,23 @@ class LocaleResource extends Resource {
                     ->columnSpan(1),
                 Forms\Components\Grid::make(2)
                     ->schema([
-                        Forms\Components\TextInput::make('code')
-                            ->label('Taalcode')
-                            ->placeholder('nl_NL, en_GB, de_DE, nl_BE...')
-                            ->unique(ignoreRecord: true)
-                            ->required(),
-                        Forms\Components\TextInput::make('hreflang')
-                            ->label('Hreflang')
-                            ->placeholder('nl, en, de, nl-be...')
-                            ->unique(ignoreRecord: true)
-                            ->helperText('Wordt gebruikt als voorvoegsel in de URL')
-                            ->required(),
+                        Forms\Components\ToggleButtons::make('is_default')
+                            ->label('Standaardtaal')
+                            ->boolean()
+                            ->inline()
+                            ->default(false)
+                            ->grouped()
+                            ->required()
+                            ->live(),
+                        Forms\Components\ToggleButtons::make('is_machine_translatable')
+                            ->label('Vertaal automatisch')
+                            ->boolean()
+                            ->inline()
+                            ->default(false)
+                            ->grouped()
+                            ->required()
                     ])
-                    ->columnSpan(1),
-                Forms\Components\ToggleButtons::make('is_default')
-                    ->label('Standaardtaal')
-                    ->boolean()
-                    ->inline()
-                    ->default(false)
-                    ->grouped()
-                    ->required()
-                    ->live(),
-                Forms\Components\ToggleButtons::make('is_machine_translatable')
-                    ->label('Vertaal automatisch')
-                    ->boolean()
-                    ->inline()
-                    ->default(false)
-                    ->grouped()
-                    ->required()
+                    ->columnSpan(1)
             ]);
     }
 
