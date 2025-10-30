@@ -32,7 +32,7 @@ class LocaleResource extends Resource {
                     ->helperText('Deze naam wordt getoond in het beheerpaneel.')
                     ->placeholder('Engels')
                     ->required(),
-                Forms\Components\TextInput::make('localized_name')
+                Forms\Components\TextInput::make('native_name')
                     ->label('Vertaalde naam')
                     ->helperText('Deze naam wordt getoond op de website zelf.')
                     ->placeholder('English')
@@ -80,7 +80,7 @@ class LocaleResource extends Resource {
             ->columns([
                 TextColumn::make('name')
                     ->label('Naam'),
-                TextColumn::make('localized_name')
+                TextColumn::make('native_name')
                     ->label('Vertaalde naam'),
                 TextColumn::make('code')
                     ->label('Taalcode'),

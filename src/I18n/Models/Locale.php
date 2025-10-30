@@ -69,7 +69,7 @@ class Locale extends Model {
         return $this->name;
     }
 
-    public function localizedName() {
-        return $this->localized_name;
+    public function nativeName() {
+        return $this->native_name;
     }
 }
