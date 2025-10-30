@@ -53,7 +53,7 @@ trait Translatable {
     }
 
     public function translations(): MorphMany {
-        return $this->morphMany(Translation::class, 'record');
+        return $this->morphMany(Translation::class, 'record')->chaperone();
     }
 
     /**

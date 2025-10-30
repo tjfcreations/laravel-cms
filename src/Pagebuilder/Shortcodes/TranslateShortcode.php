@@ -23,26 +23,26 @@ class TranslateShortcode extends Shortcode {
             $translationSources->push(...$data['translationSources']);
         }
 
-        if (isset($data['page']->page)) {
-            $translationSources->push($data['page']->page->unwrap());
-        }
-
         if (isset($data['page']->record)) {
             $translationSources->push($data['page']->record->unwrap());
         }
 
+        if (isset($data['page']->page)) {
+            $translationSources->push($data['page']->page->unwrap());
+        }
+
         foreach ($translationSources as $record) {
             $translation = Translation::get($key, $record, 'custom');
-            if ($translation->exists) return $translation->translate();
+            if ($translation->exists()) return $translation->translate();
 
             $translation = Translation::get($key, $record);
-            if ($translation->exists) return $translation->translate();
+            if ($translation->exists()) return $translation->translate();
         }
 
         // look in global translations
         $translation = Translation::get($key);
-        if ($translation->exists) return $translation->translate();
+        if ($translation->exists()) return $translation->translate();
 
-        return $key;
+        return null;
     }
 }

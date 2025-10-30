@@ -57,6 +57,10 @@ class Translation extends Model {
         return $value;
     }
 
+    public function exists() {
+        return count($this->values()) > 0;
+    }
+
     /**
      * Get all translation values.
      */
@@ -295,9 +299,14 @@ class Translation extends Model {
             $group = null;
         }
 
-        $translation = self::getTranslations($record)
-            ->where(['key' => $key, 'group' => $group])
-            ->first();
+        if (isset($record)) {
+            $translation = $record->translations
+                ->first(fn($t) => $t->key === $key && $t->group === $group);
+        } else {
+            $translation = Translation::query()
+                ->where(['key' => $key, 'group' => $group])
+                ->first();
+        }
 
         if (!$translation) {
             $translation = new Translation();
@@ -323,9 +332,5 @@ class Translation extends Model {
         if ($isOnlyShortcode) return false;
 
         return true;
-    }
-
-    protected static function getTranslations(?TranslatableInterface $record = null): Collection|Builder {
-        return isset($record) ? $record->translations : Translation::query();
     }
 }
