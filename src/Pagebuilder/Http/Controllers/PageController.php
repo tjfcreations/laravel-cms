@@ -38,7 +38,7 @@ class PageController {
 
         if (!$page) {
             $pageId = request()->route('_pageId');
-            $page = Page::findOrFail($pageId) ?? Page::make();
+            $page = Page::findById($pageId) ?? Page::make();
         }
 
         if ($page->isDraft() && !Auth::user()) {

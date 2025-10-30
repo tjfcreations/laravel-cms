@@ -74,7 +74,8 @@ class Link {
         }
 
         if ($this->isPage()) {
-            $page = $this->getPage();
+            $pageId = $this->getPageId();
+            $page = Page::findById($pageId);
             if (!$page) return null;
 
             if ($page->isTemplate()) {
@@ -95,12 +96,5 @@ class Link {
         }
 
         return null;
-    }
-
-    public function getPage() {
-        return once(function () {
-            $pageId = $this->getPageId();
-            return Page::findOrFail($pageId);
-        });
     }
 }
