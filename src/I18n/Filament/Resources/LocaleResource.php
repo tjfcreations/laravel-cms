@@ -40,7 +40,7 @@ class LocaleResource extends Resource {
                     ->required(),
                 Forms\Components\TextInput::make('code')
                     ->label('Taalcode')
-                    ->placeholder('nl_NL, en_GB, de_DE, nl_BE...')
+                    ->placeholder('nl, en, de, fr, fr-CA...')
                     ->unique(ignoreRecord: true)
                     ->helperText('Deze taalcode wordt gebruikt voor automatische vertalingen.')
                     ->hintAction(Actions\Action::make('open_docs')
@@ -51,7 +51,7 @@ class LocaleResource extends Resource {
                     ->required(),
                 Forms\Components\TextInput::make('hreflang')
                     ->label('Hreflang')
-                    ->placeholder('nl, en, de, nl-be...')
+                    ->placeholder('nl, en, de, fr, fr-CA...')
                     ->unique(ignoreRecord: true)
                     ->helperText('De hreflang wordt gebruikt als voorvoegsel in de URL.')
                     ->required(),
