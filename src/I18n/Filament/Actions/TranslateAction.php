@@ -167,11 +167,6 @@ class TranslateAction extends Action {
                 $this->mutateFormComponents($locale, $component->getChildComponents());
             }
 
-            // add locale name suffix
-            if ($component->getLabel()) {
-                $component->label($component->getLabel() . " ({$locale->name})");
-            }
-
             // add hint with translation information
             $translation = Translation::get($component->getName(), $this->getRecord());
             TranslationsForm::mutateFormComponent($locale, $component, $translation);

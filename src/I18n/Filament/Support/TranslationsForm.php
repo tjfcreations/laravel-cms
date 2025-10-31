@@ -11,7 +11,12 @@ use Filament\Forms\Set;
 use Illuminate\Support\Collection;
 
 class TranslationsForm {
-    public static function mutateFormComponent(Locale $locale, Component $component, ?Translation $translation = null): void {
+    public static function mutateFormComponent(Locale $locale, Component $component, ?Translation $translation = null): Component {
+        // add locale name suffix
+        if ($component->getLabel()) {
+            $component->label($component->getLabel() . " ({$locale->name})");
+        }
+
         // show whether the value is machine generated
         if ($translation) {
             $formattedDate = $translation->updatedAt($locale->code)->format('d-m-Y \o\m H:i.');
@@ -25,6 +30,8 @@ class TranslationsForm {
                     ->hintIcon('heroicon-s-clock', tooltip: 'Handmatig aangepast op ' . $formattedDate);
             }
         }
+
+        return $component;
     }
 
 
