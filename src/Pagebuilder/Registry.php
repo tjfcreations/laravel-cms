@@ -9,27 +9,27 @@ use Illuminate\Support\Collection;
 
 class Registry {
     public static function blocks(): Collection {
-        return self::getInstances(self::cache(
+        return once(fn() => self::getInstances(self::cache(
             'pagebuilder.blocks',
             fn() =>
             self::discoverClasses(Block::class)
-        ));
+        )));
     }
 
     public static function shortcodes(): Collection {
-        return self::getInstances(self::cache(
+        return once(fn() => self::getInstances(self::cache(
             'pagebuilder.shortcodes',
             fn() =>
             self::discoverClasses(Shortcode::class)
-        ));
+        )));
     }
 
     public static function models(): Collection {
-        return self::getInstances(self::cache(
+        return once(fn() => self::getInstances(self::cache(
             'app.models',
             fn() =>
             self::discoverClasses(Model::class)
-        ));
+        )));
     }
 
     protected static function getInstances(array $models): Collection {

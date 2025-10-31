@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\File;
 
 class Registry {
     public static function translatables(): Collection {
-        return PagebuilderRegistry::models()
-            ->filter(fn($model) => $model instanceof TranslatableInterface);
+        return once(fn() => PagebuilderRegistry::models()
+            ->filter(fn($model) => $model instanceof TranslatableInterface));
     }
 
     public static function isMachineTranslationEnabled() {
